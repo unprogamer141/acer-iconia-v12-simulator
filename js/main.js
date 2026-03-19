@@ -1,3 +1,22 @@
+let battery = 100;
+let charging = false;
+
+function updateBattery() {
+  if (!charging) {
+    battery -= 0.1;
+    if (battery < 0) battery = 0;
+  } else {
+    battery += 0.5;
+    if (battery > 100) battery = 100;
+  }
+  const battStr = Math.round(battery) + '%';
+  const icon = charging ? '🔌' : (battery > 20 ? '🔋' : '🪫');
+  const el = document.getElementById('status-icons');
+  if (el) el.textContent = 'WiFi | BT | ' + icon + battStr;
+}
+
+setInterval(updateBattery, 3000);
+
 function updateClock() {
   const now = new Date();
   let hours = now.getHours();
@@ -159,6 +178,14 @@ const notesHTML = '<textarea id="note-input" placeholder="Type your note here...
   '<button onclick="saveNote()" style="width:100%;padding:12px;background:#f0a500;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;">Save Note</button>' +
   '<div id="notes-list" style="margin-top:15px;"></div>';
 
+const batteryHTML = '<div style="text-align:center;padding:20px;">' +
+  '<div style="font-size:80px;">🔋</div>' +
+  '<div style="font-size:50px;margin:10px 0;" id="batt-display">' + Math.round(battery) + '%</div>' +
+  '<div style="font-size:16px;opacity:0.6;margin-bottom:20px;" id="batt-status">' + (charging ? 'Charging' : 'Discharging') + '</div>' +
+  '<button onclick="charging=true;document.getElementById(\'batt-status\').textContent=\'Charging\'" style="padding:12px 25px;background:#27ae60;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔌 Plug In</button>' +
+  '<button onclick="charging=false;document.getElementById(\'batt-status\').textContent=\'Discharging\'" style="padding:12px 25px;background:#e74c3c;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔋 Unplug</button>' +
+  '</div>';
+
 function openApp(appName) {
   const appScreen = document.getElementById('appscreen');
   const appTitle = document.getElementById('appscreen-title');
@@ -168,7 +195,7 @@ function openApp(appName) {
   if (appName === 'Back') { appScreen.style.display = 'none'; return; }
 
   const apps = {
-    'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>100%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
+    'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
     'Camera': '<div class="app-placeholder">📷 Camera<br><br>8MP Rear | 5MP Front</div>',
     'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
     'Files': '<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>',
@@ -178,6 +205,7 @@ function openApp(appName) {
     'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
     'Notes': notesHTML,
     'Maps': '<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>',
+    'Battery': batteryHTML,
   };
 
   if (apps[appName]) {
