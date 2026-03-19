@@ -224,6 +224,50 @@ function updateMusicUI() {
   if (duration) duration.textContent = s.duration;
 }
 
+function startCamera() {
+  const video = document.getElementById('camera-video');
+  if (!video) return;
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => { video.srcObject = stream; video.play(); })
+    .catch(() => {
+      const placeholder = document.getElementById('camera-placeholder');
+      if (placeholder) placeholder.style.display = 'flex';
+      if (video) video.style.display = 'none';
+    });
+}
+
+function takePhoto() {
+  const video = document.getElementById('camera-video');
+  const canvas = document.getElementById('camera-canvas');
+  if (!video || !canvas) return;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const flash = document.getElementById('camera-flash');
+  if (flash) {
+    flash.style.opacity = '1';
+    setTimeout(() => { flash.style.opacity = '0'; }, 200);
+  }
+  alert('📷 Photo taken!');
+}
+
+function switchCamera() {
+  alert('🔄 Switching between 8MP rear and 5MP front camera...');
+}
+
+const cameraHTML =
+  '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;">' +
+  '<div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div>' +
+  '<video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video>' +
+  '<div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;">' +
+  '<div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div>' +
+  '</div>' +
+  '<div style="display:flex;justify-content:space-around;align-items:center;padding:15px;background:#111;">' +
+  '<button onclick="switchCamera()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;cursor:pointer;">🔄</button>' +
+  '<button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button>' +
+  '<button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button>' +
+  '</div></div>';
+
 const filesHomeHTML =
   '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div>' +
   '<div class="file-storage-fill"><div class="file-storage-used"></div></div>' +
@@ -339,7 +383,7 @@ function openApp(appName) {
 
   const apps = {
     'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
-    'Camera': '<div class="app-placeholder">📷 Camera<br><br>8MP Rear | 5MP Front</div>',
+    'Camera': cameraHTML,
     'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
     'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
     'Browser': browserHTML,
@@ -356,6 +400,10 @@ function openApp(appName) {
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
+    if (appName === 'Camera') {
+      appContent.style.padding = '0';
+      startCamera();
+    }
     if (appName === 'Browser' || appName === 'Maps') {
       appContent.style.display = 'flex';
       appContent.style.flexDirection = 'column';
