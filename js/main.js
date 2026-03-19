@@ -27,7 +27,6 @@ function updateClock() {
   const timeStr = hours + ':' + minutes + ' ' + ampm;
   document.getElementById('clock').textContent = timeStr;
   document.getElementById('status-time').textContent = timeStr;
-
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
@@ -40,7 +39,6 @@ let startY = 0;
 document.getElementById('lockscreen').addEventListener('touchstart', (e) => {
   startY = e.touches[0].clientY;
 });
-
 document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   const endY = e.changedTouches[0].clientY;
   if (startY - endY > 50) {
@@ -135,6 +133,12 @@ function showClockTab(tab) {
   document.getElementById('tab-timer').style.display = tab === 'timer' ? 'block' : 'none';
 }
 
+function browserGo() {
+  let url = document.getElementById('browser-url').value;
+  if (!url.startsWith('http')) url = 'https://' + url;
+  document.getElementById('browser-frame').src = url;
+}
+
 function showFolder(name) {
   const folders = {
     'Downloads': ['video1.mp4','photo1.jpg','document.pdf','music1.mp3'],
@@ -168,6 +172,13 @@ const filesHomeHTML =
   '<div class="folder-item" onclick="showFolder(\'Documents\')">📄<span>Documents</span></div>' +
   '<div class="folder-item" onclick="showFolder(\'DCIM\')">📷<span>DCIM</span></div>' +
   '</div>';
+
+const browserHTML =
+  '<div class="browser-bar">' +
+  '<input id="browser-url" type="text" placeholder="Enter URL e.g. google.com" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
+  '<button onclick="browserGo()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px;">Go</button>' +
+  '</div>' +
+  '<iframe id="browser-frame" src="https://www.google.com" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;"></iframe>';
 
 const clockHTML = '<div class="clock-tabs">' +
   '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
@@ -233,7 +244,7 @@ function openApp(appName) {
     'Camera': '<div class="app-placeholder">📷 Camera<br><br>8MP Rear | 5MP Front</div>',
     'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
     'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
-    'Browser': '<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>',
+    'Browser': browserHTML,
     'Calculator': calcHTML,
     'Clock': clockHTML,
     'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
@@ -247,5 +258,9 @@ function openApp(appName) {
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
+    if (appName === 'Browser') {
+      document.getElementById('appscreen-content').style.display = 'flex';
+      document.getElementById('appscreen-content').style.flexDirection = 'column';
+    }
   }
 }
