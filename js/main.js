@@ -259,6 +259,24 @@ const musicHTML =
   songs.map((s,i) => '<div onclick="currentSong='+i+';musicProgress=0;updateMusicUI();" style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;">🎵 ' + s.title + ' - ' + s.artist + '</div>').join('') +
   '</div></div>';
 
+const mapsHTML =
+  '<div style="padding:10px;">' +
+  '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
+  '<input id="map-search" type="text" placeholder="Search location..." style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
+  '<button onclick="mapSearch()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;cursor:pointer;">🔍</button>' +
+  '</div></div>' +
+  '<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1276%2C51.5074%2C-0.1276%2C51.5074&layer=mapnik" style="width:100%;height:75%;border:none;border-radius:10px;"></iframe>' +
+  '<div id="map-result" style="padding:10px;font-size:13px;opacity:0.7;"></div>';
+
+function mapSearch() {
+  const query = document.getElementById('map-search').value;
+  if (!query) return;
+  const result = document.getElementById('map-result');
+  if (result) result.textContent = '📍 Searching for: ' + query + '...';
+  const iframe = document.querySelector('#appscreen-content iframe');
+  if (iframe) iframe.src = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(query);
+}
+
 const clockHTML = '<div class="clock-tabs">' +
   '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
   '<button class="clock-tab" onclick="showClockTab(\'timer\')">Timer</button>' +
@@ -329,7 +347,7 @@ function openApp(appName) {
     'Clock': clockHTML,
     'Music': musicHTML,
     'Notes': notesHTML,
-    'Maps': '<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>',
+    'Maps': mapsHTML,
     'Battery': batteryHTML,
   };
 
@@ -338,7 +356,7 @@ function openApp(appName) {
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
-    if (appName === 'Browser') {
+    if (appName === 'Browser' || appName === 'Maps') {
       appContent.style.display = 'flex';
       appContent.style.flexDirection = 'column';
     }
