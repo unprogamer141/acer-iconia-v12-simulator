@@ -30,6 +30,22 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   }
 });
 
+let calcValue = '';
+
+function calcPress(val) {
+  const display = document.getElementById('calc-display');
+  if (val === '=') {
+    try { calcValue = String(eval(calcValue)); } catch(e) { calcValue = 'Error'; }
+  } else if (val === 'C') {
+    calcValue = '';
+  } else if (val === '⌫') {
+    calcValue = calcValue.slice(0, -1);
+  } else {
+    calcValue += val;
+  }
+  display.textContent = calcValue || '0';
+}
+
 function openApp(appName) {
   const appScreen = document.getElementById('appscreen');
   const appTitle = document.getElementById('appscreen-title');
@@ -60,7 +76,30 @@ function openApp(appName) {
     'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
     'Files': '<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>',
     'Browser': '<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>',
-    'Calculator': '<div class="app-placeholder">🧮 Calculator<br><br>Coming Soon</div>',
+    'Calculator': `
+      <div id="calc-display">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn red" onclick="calcPress('C')">C</button>
+        <button class="calc-btn" onclick="calcPress('⌫')">⌫</button>
+        <button class="calc-btn" onclick="calcPress('%')">%</button>
+        <button class="calc-btn op" onclick="calcPress('/'">÷</button>
+        <button class="calc-btn" onclick="calcPress('7')">7</button>
+        <button class="calc-btn" onclick="calcPress('8')">8</button>
+        <button class="calc-btn" onclick="calcPress('9')">9</button>
+        <button class="calc-btn op" onclick="calcPress('*')">×</button>
+        <button class="calc-btn" onclick="calcPress('4')">4</button>
+        <button class="calc-btn" onclick="calcPress('5')">5</button>
+        <button class="calc-btn" onclick="calcPress('6')">6</button>
+        <button class="calc-btn op" onclick="calcPress('-')">−</button>
+        <button class="calc-btn" onclick="calcPress('1')">1</button>
+        <button class="calc-btn" onclick="calcPress('2')">2</button>
+        <button class="calc-btn" onclick="calcPress('3')">3</button>
+        <button class="calc-btn op" onclick="calcPress('+')">+</button>
+        <button class="calc-btn" onclick="calcPress('0')">0</button>
+        <button class="calc-btn" onclick="calcPress('.')">.</button>
+        <button class="calc-btn op" style="grid-column:span 2" onclick="calcPress('=')">=</button>
+      </div>
+    `,
     'Clock': '<div class="app-placeholder">🕐 Clock<br><br>Alarm | Timer | Stopwatch</div>',
     'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
     'Notes': '<div class="app-placeholder">📝 Notes<br><br>No Notes Yet</div>',
