@@ -130,6 +130,45 @@ function startTimer() {
   }, 1000);
 }
 
+function showClockTab(tab) {
+  document.getElementById('tab-stopwatch').style.display = tab === 'stopwatch' ? 'block' : 'none';
+  document.getElementById('tab-timer').style.display = tab === 'timer' ? 'block' : 'none';
+}
+
+function showFolder(name) {
+  const folders = {
+    'Downloads': ['video1.mp4','photo1.jpg','document.pdf','music1.mp3'],
+    'Pictures': ['selfie.jpg','wallpaper.png','screenshot.jpg'],
+    'Music': ['song1.mp3','song2.mp3','playlist.m3u'],
+    'Videos': ['movie.mp4','clip1.mp4'],
+    'Documents': ['notes.txt','report.pdf','spreadsheet.xlsx'],
+    'DCIM': ['IMG_001.jpg','IMG_002.jpg','IMG_003.jpg'],
+  };
+  const files = folders[name] || [];
+  const el = document.getElementById('files-content');
+  if (!el) return;
+  el.innerHTML = '<div class="file-header" onclick="showFilesHome()">◀ ' + name + '</div>' +
+    files.map(f => '<div class="file-item">📄 ' + f + '</div>').join('');
+}
+
+function showFilesHome() {
+  const el = document.getElementById('files-content');
+  if (!el) return;
+  el.innerHTML = filesHomeHTML;
+}
+
+const filesHomeHTML =
+  '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div>' +
+  '<div class="file-storage-fill"><div class="file-storage-used"></div></div>' +
+  '<div class="files-grid">' +
+  '<div class="folder-item" onclick="showFolder(\'Downloads\')">📥<span>Downloads</span></div>' +
+  '<div class="folder-item" onclick="showFolder(\'Pictures\')">🖼️<span>Pictures</span></div>' +
+  '<div class="folder-item" onclick="showFolder(\'Music\')">🎵<span>Music</span></div>' +
+  '<div class="folder-item" onclick="showFolder(\'Videos\')">🎬<span>Videos</span></div>' +
+  '<div class="folder-item" onclick="showFolder(\'Documents\')">📄<span>Documents</span></div>' +
+  '<div class="folder-item" onclick="showFolder(\'DCIM\')">📷<span>DCIM</span></div>' +
+  '</div>';
+
 const clockHTML = '<div class="clock-tabs">' +
   '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
   '<button class="clock-tab" onclick="showClockTab(\'timer\')">Timer</button>' +
@@ -146,11 +185,6 @@ const clockHTML = '<div class="clock-tabs">' +
   '<input id="timer-input" type="number" placeholder="Minutes" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:18px;margin-bottom:10px;background:#0f2027;color:white;"/>' +
   '<button class="clock-btn green" onclick="startTimer()">Start Timer</button>' +
   '</div>';
-
-function showClockTab(tab) {
-  document.getElementById('tab-stopwatch').style.display = tab === 'stopwatch' ? 'block' : 'none';
-  document.getElementById('tab-timer').style.display = tab === 'timer' ? 'block' : 'none';
-}
 
 const calcHTML = '<div id="calc-display">0</div><div class="calc-grid">' +
   '<button class="calc-btn red" onclick="calcPress(\'C\')">C</button>' +
@@ -198,7 +232,7 @@ function openApp(appName) {
     'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
     'Camera': '<div class="app-placeholder">📷 Camera<br><br>8MP Rear | 5MP Front</div>',
     'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
-    'Files': '<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>',
+    'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
     'Browser': '<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>',
     'Calculator': calcHTML,
     'Clock': clockHTML,
