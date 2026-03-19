@@ -220,3 +220,60 @@ body {
   background: #e74c3c;
   color: white;
 }
+
+.note-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.note-text {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.note-time {
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+.clock-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.clock-tab {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.clock-tab.active {
+  background: #f0a500;
+}
+
+.clock-btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  background: rgba(255,255,255,0.2);
+  margin: 5px;
+}
+
+.clock-btn.green {
+  background: #27ae60;
+}
+
+.clock-btn.red {
+  background: #e74c3c;
+}

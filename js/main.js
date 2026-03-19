@@ -31,7 +31,6 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
 });
 
 let calcValue = '';
-
 function calcPress(val) {
   const display = document.getElementById('calc-display');
   if (val === '=') {
@@ -63,6 +62,75 @@ function loadNotes() {
   list.innerHTML = notes.reverse().map(n =>
     '<div class="note-item"><div class="note-text">' + n.text + '</div><div class="note-time">' + n.time + '</div></div>'
   ).join('');
+}
+
+let stopwatchTime = 0;
+let stopwatchRunning = false;
+let stopwatchInterval = null;
+
+function stopwatchStart() {
+  if (stopwatchRunning) return;
+  stopwatchRunning = true;
+  stopwatchInterval = setInterval(() => {
+    stopwatchTime++;
+    const mins = String(Math.floor(stopwatchTime / 60)).padStart(2, '0');
+    const secs = String(stopwatchTime % 60).padStart(2, '0');
+    const el = document.getElementById('stopwatch-display');
+    if (el) el.textContent = mins + ':' + secs;
+  }, 1000);
+}
+
+function stopwatchStop() {
+  stopwatchRunning = false;
+  clearInterval(stopwatchInterval);
+}
+
+function stopwatchReset() {
+  stopwatchStop();
+  stopwatchTime = 0;
+  const el = document.getElementById('stopwatch-display');
+  if (el) el.textContent = '00:00';
+}
+
+let timerInterval = null;
+function startTimer() {
+  const input = document.getElementById('timer-input').value;
+  let seconds = parseInt(input) * 60;
+  if (!seconds) return;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    seconds--;
+    const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    const el = document.getElementById('timer-display');
+    if (el) el.textContent = mins + ':' + secs;
+    if (seconds <= 0) {
+      clearInterval(timerInterval);
+      if (el) el.textContent = 'DONE!';
+    }
+  }, 1000);
+}
+
+const clockHTML = '<div class="clock-tabs">' +
+  '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
+  '<button class="clock-tab" onclick="showClockTab(\'timer\')">Timer</button>' +
+  '</div>' +
+  '<div id="tab-stopwatch">' +
+  '<div id="stopwatch-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div>' +
+  '<div style="display:flex;gap:10px;justify-content:center;">' +
+  '<button class="clock-btn green" onclick="stopwatchStart()">Start</button>' +
+  '<button class="clock-btn red" onclick="stopwatchStop()">Stop</button>' +
+  '<button class="clock-btn" onclick="stopwatchReset()">Reset</button>' +
+  '</div></div>' +
+  '<div id="tab-timer" style="display:none;">' +
+  '<div id="timer-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div>' +
+  '<input id="timer-input" type="number" placeholder="Minutes" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:18px;margin-bottom:10px;background:#0f2027;color:white;"/>' +
+  '<button class="clock-btn green" onclick="startTimer()">Start Timer</button>' +
+  '</div>';
+
+function showClockTab(tab) {
+  document.getElementById('tab-stopwatch').style.display = tab === 'stopwatch' ? 'block' : 'none';
+  document.getElementById('tab-timer').style.display = tab === 'timer' ? 'block' : 'none';
 }
 
 const calcHTML = '<div id="calc-display">0</div><div class="calc-grid">' +
@@ -106,7 +174,7 @@ function openApp(appName) {
     'Files': '<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>',
     'Browser': '<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>',
     'Calculator': calcHTML,
-    'Clock': '<div class="app-placeholder">🕐 Clock<br><br>Alarm | Timer | Stopwatch</div>',
+    'Clock': clockHTML,
     'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
     'Notes': notesHTML,
     'Maps': '<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>',
