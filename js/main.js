@@ -47,18 +47,13 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   }
 });
 
-document.getElementById('statusbar').addEventListener('click', () => {
-  openNoti();
-});
+document.getElementById('statusbar').addEventListener('click', () => { openNoti(); });
 
 function openNoti() {
-  const panel = document.getElementById('notipanel');
-  panel.style.display = 'flex';
+  document.getElementById('notipanel').style.display = 'flex';
 }
-
 function closeNoti() {
-  const panel = document.getElementById('notipanel');
-  panel.style.display = 'none';
+  document.getElementById('notipanel').style.display = 'none';
 }
 
 let calcValue = '';
@@ -135,10 +130,7 @@ function startTimer() {
     const secs = String(seconds % 60).padStart(2, '0');
     const el = document.getElementById('timer-display');
     if (el) el.textContent = mins + ':' + secs;
-    if (seconds <= 0) {
-      clearInterval(timerInterval);
-      if (el) el.textContent = 'DONE!';
-    }
+    if (seconds <= 0) { clearInterval(timerInterval); if (el) el.textContent = 'DONE!'; }
   }, 1000);
 }
 
@@ -175,6 +167,63 @@ function showFilesHome() {
   el.innerHTML = filesHomeHTML;
 }
 
+const songs = [
+  { title: 'Song One', artist: 'Artist A', duration: '3:24' },
+  { title: 'Song Two', artist: 'Artist B', duration: '4:12' },
+  { title: 'Song Three', artist: 'Artist C', duration: '2:58' },
+  { title: 'Song Four', artist: 'Artist D', duration: '5:01' },
+];
+
+let currentSong = 0;
+let musicPlaying = false;
+let musicProgress = 0;
+let musicInterval = null;
+
+function musicPlay() {
+  musicPlaying = true;
+  document.getElementById('music-play-btn').textContent = '⏸';
+  musicInterval = setInterval(() => {
+    musicProgress += 1;
+    if (musicProgress > 100) { musicProgress = 0; musicNext(); }
+    const bar = document.getElementById('music-progress');
+    if (bar) bar.value = musicProgress;
+  }, 1000);
+}
+
+function musicPause() {
+  musicPlaying = false;
+  clearInterval(musicInterval);
+  document.getElementById('music-play-btn').textContent = '▶';
+}
+
+function musicToggle() {
+  if (musicPlaying) musicPause(); else musicPlay();
+}
+
+function musicNext() {
+  currentSong = (currentSong + 1) % songs.length;
+  musicProgress = 0;
+  updateMusicUI();
+  if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
+}
+
+function musicPrev() {
+  currentSong = (currentSong - 1 + songs.length) % songs.length;
+  musicProgress = 0;
+  updateMusicUI();
+  if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
+}
+
+function updateMusicUI() {
+  const s = songs[currentSong];
+  const title = document.getElementById('music-title');
+  const artist = document.getElementById('music-artist');
+  const duration = document.getElementById('music-duration');
+  if (title) title.textContent = s.title;
+  if (artist) artist.textContent = s.artist;
+  if (duration) duration.textContent = s.duration;
+}
+
 const filesHomeHTML =
   '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div>' +
   '<div class="file-storage-fill"><div class="file-storage-used"></div></div>' +
@@ -189,10 +238,26 @@ const filesHomeHTML =
 
 const browserHTML =
   '<div class="browser-bar">' +
-  '<input id="browser-url" type="text" placeholder="Enter URL e.g. google.com" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
+  '<input id="browser-url" type="text" placeholder="Enter URL e.g. wikipedia.org" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
   '<button onclick="browserGo()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px;">Go</button>' +
   '</div>' +
   '<iframe id="browser-frame" src="https://www.wikipedia.org" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;height:80%;"></iframe>';
+
+const musicHTML =
+  '<div style="text-align:center;padding:20px;">' +
+  '<div style="font-size:80px;margin-bottom:10px;">🎵</div>' +
+  '<div id="music-title" style="font-size:22px;font-weight:bold;">Song One</div>' +
+  '<div id="music-artist" style="font-size:16px;opacity:0.6;margin:5px 0;">Artist A</div>' +
+  '<div id="music-duration" style="font-size:14px;opacity:0.4;margin-bottom:20px;">3:24</div>' +
+  '<input id="music-progress" type="range" min="0" max="100" value="0" style="width:100%;accent-color:#f0a500;margin-bottom:20px;"/>' +
+  '<div style="display:flex;justify-content:center;gap:20px;">' +
+  '<button onclick="musicPrev()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏮</button>' +
+  '<button id="music-play-btn" onclick="musicToggle()" style="font-size:36px;background:#f0a500;border:none;color:white;cursor:pointer;border-radius:50%;width:60px;height:60px;">▶</button>' +
+  '<button onclick="musicNext()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏭</button>' +
+  '</div>' +
+  '<div style="margin-top:25px;text-align:left;">' +
+  songs.map((s,i) => '<div onclick="currentSong='+i+';musicProgress=0;updateMusicUI();" style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;">🎵 ' + s.title + ' - ' + s.artist + '</div>').join('') +
+  '</div></div>';
 
 const clockHTML = '<div class="clock-tabs">' +
   '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
@@ -239,7 +304,7 @@ const notesHTML = '<textarea id="note-input" placeholder="Type your note here...
 
 const batteryHTML = '<div style="text-align:center;padding:20px;">' +
   '<div style="font-size:80px;">🔋</div>' +
-  '<div style="font-size:50px;margin:10px 0;" id="batt-display">' + Math.round(battery) + '%</div>' +
+  '<div style="font-size:50px;margin:10px 0;">' + Math.round(battery) + '%</div>' +
   '<div style="font-size:16px;opacity:0.6;margin-bottom:20px;" id="batt-status">' + (charging ? 'Charging' : 'Discharging') + '</div>' +
   '<button onclick="charging=true;document.getElementById(\'batt-status\').textContent=\'Charging\'" style="padding:12px 25px;background:#27ae60;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔌 Plug In</button>' +
   '<button onclick="charging=false;document.getElementById(\'batt-status\').textContent=\'Discharging\'" style="padding:12px 25px;background:#e74c3c;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔋 Unplug</button>' +
@@ -251,7 +316,6 @@ function openApp(appName) {
   const appContent = document.getElementById('appscreen-content');
 
   closeNoti();
-
   if (appName === 'Home') { appScreen.style.display = 'none'; return; }
   if (appName === 'Back') { appScreen.style.display = 'none'; return; }
 
@@ -263,7 +327,7 @@ function openApp(appName) {
     'Browser': browserHTML,
     'Calculator': calcHTML,
     'Clock': clockHTML,
-    'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
+    'Music': musicHTML,
     'Notes': notesHTML,
     'Maps': '<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>',
     'Battery': batteryHTML,
