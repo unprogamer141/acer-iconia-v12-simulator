@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Acer Iconia V12 Simulator</title>
-  <link rel="stylesheet" href="css/style.css?v=10"/>
+  <link rel="stylesheet" href="css/style.css?v=11"/>
 </head>
 <body>
   <div id="tablet">
@@ -19,7 +19,7 @@
 
       <!-- Homescreen -->
       <div id="homescreen">
-        <div id="statusbar">
+        <div id="statusbar" id="statusbar">
           <span id="status-time">12:00</span>
           <span id="status-icons">WiFi | BT | 🔋100%</span>
         </div>
@@ -42,6 +42,25 @@
         </div>
       </div>
 
+      <!-- Notification Panel -->
+      <div id="notipanel">
+        <div id="notipanel-header">
+          <span>Notifications</span>
+          <span onclick="closeNoti()" style="cursor:pointer;">✕</span>
+        </div>
+        <div class="noti-toggles">
+          <div class="noti-toggle" onclick="this.classList.toggle('active')">📶 WiFi</div>
+          <div class="noti-toggle active" onclick="this.classList.toggle('active')">🔵 BT</div>
+          <div class="noti-toggle active" onclick="this.classList.toggle('active')">📍 GPS</div>
+          <div class="noti-toggle" onclick="this.classList.toggle('active')">✈️ Airplane</div>
+          <div class="noti-toggle active" onclick="this.classList.toggle('active')">🔕 Silent</div>
+          <div class="noti-toggle active" onclick="this.classList.toggle('active')">🌐 Data</div>
+        </div>
+        <div class="noti-item">📱 <b>System</b> - Welcome to Acer Iconia V12</div>
+        <div class="noti-item">🔋 <b>Battery</b> - Fully charged</div>
+        <div class="noti-item">📶 <b>WiFi</b> - Connected to network</div>
+      </div>
+
       <!-- App Screen -->
       <div id="appscreen">
         <div id="appscreen-header">
@@ -53,6 +72,6 @@
 
     </div>
   </div>
-  <script src="js/main.js?v=10"></script>
+  <script src="js/main.js?v=11"></script>
 </body>
 </html>

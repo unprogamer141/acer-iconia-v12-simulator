@@ -47,6 +47,20 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   }
 });
 
+document.getElementById('statusbar').addEventListener('click', () => {
+  openNoti();
+});
+
+function openNoti() {
+  const panel = document.getElementById('notipanel');
+  panel.style.display = 'flex';
+}
+
+function closeNoti() {
+  const panel = document.getElementById('notipanel');
+  panel.style.display = 'none';
+}
+
 let calcValue = '';
 function calcPress(val) {
   const display = document.getElementById('calc-display');
@@ -178,7 +192,7 @@ const browserHTML =
   '<input id="browser-url" type="text" placeholder="Enter URL e.g. google.com" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
   '<button onclick="browserGo()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px;">Go</button>' +
   '</div>' +
-  '<iframe id="browser-frame" src="https://www.google.com" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;"></iframe>';
+  '<iframe id="browser-frame" src="https://www.wikipedia.org" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;height:80%;"></iframe>';
 
 const clockHTML = '<div class="clock-tabs">' +
   '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
@@ -236,6 +250,8 @@ function openApp(appName) {
   const appTitle = document.getElementById('appscreen-title');
   const appContent = document.getElementById('appscreen-content');
 
+  closeNoti();
+
   if (appName === 'Home') { appScreen.style.display = 'none'; return; }
   if (appName === 'Back') { appScreen.style.display = 'none'; return; }
 
@@ -259,8 +275,8 @@ function openApp(appName) {
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
     if (appName === 'Browser') {
-      document.getElementById('appscreen-content').style.display = 'flex';
-      document.getElementById('appscreen-content').style.flexDirection = 'column';
+      appContent.style.display = 'flex';
+      appContent.style.flexDirection = 'column';
     }
   }
 }
