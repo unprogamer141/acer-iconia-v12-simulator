@@ -128,3 +128,57 @@ body {
   font-size: 20px;
   cursor: pointer;
 }
+
+#appscreen {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #1a1a2e;
+  color: white;
+  z-index: 10;
+}
+
+#appscreen-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  background: rgba(0,0,0,0.4);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#appscreen-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#appscreen-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 15px;
+}
+
+.setting-item span {
+  opacity: 0.6;
+}
+
+.app-placeholder {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 18px;
+  opacity: 0.7;
+  line-height: 2;
+}

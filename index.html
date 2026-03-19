@@ -19,30 +19,36 @@
 
       <!-- Homescreen -->
       <div id="homescreen">
-        <!-- Status Bar -->
         <div id="statusbar">
           <span id="status-time">12:00</span>
           <span id="status-icons">WiFi | BT | 🔋100%</span>
         </div>
-        <!-- App Grid -->
         <div id="appgrid">
-          <div class="app" onclick="openApp('Camera')">📷<span>Camera</span></div>
-          <div class="app" onclick="openApp('Gallery')">🖼️<span>Gallery</span></div>
-          <div class="app" onclick="openApp('Settings')">⚙️<span>Settings</span></div>
-          <div class="app" onclick="openApp('Files')">📁<span>Files</span></div>
-          <div class="app" onclick="openApp('Browser')">🌐<span>Browser</span></div>
-          <div class="app" onclick="openApp('Calculator')">🧮<span>Calculator</span></div>
-          <div class="app" onclick="openApp('Clock')">🕐<span>Clock</span></div>
-          <div class="app" onclick="openApp('Music')">🎵<span>Music</span></div>
-          <div class="app" onclick="openApp('Notes')">📝<span>Notes</span></div>
-          <div class="app" onclick="openApp('Maps')">🗺️<span>Maps</span></div>
+          <div class="app" onclick="openApp('Camera')"><div>📷</div><span>Camera</span></div>
+          <div class="app" onclick="openApp('Gallery')"><div>🖼️</div><span>Gallery</span></div>
+          <div class="app" onclick="openApp('Settings')"><div>⚙️</div><span>Settings</span></div>
+          <div class="app" onclick="openApp('Files')"><div>📁</div><span>Files</span></div>
+          <div class="app" onclick="openApp('Browser')"><div>🌐</div><span>Browser</span></div>
+          <div class="app" onclick="openApp('Calculator')"><div>🧮</div><span>Calculator</span></div>
+          <div class="app" onclick="openApp('Clock')"><div>🕐</div><span>Clock</span></div>
+          <div class="app" onclick="openApp('Music')"><div>🎵</div><span>Music</span></div>
+          <div class="app" onclick="openApp('Notes')"><div>📝</div><span>Notes</span></div>
+          <div class="app" onclick="openApp('Maps')"><div>🗺️</div><span>Maps</span></div>
         </div>
-        <!-- Navigation Bar -->
         <div id="navbar">
           <span onclick="openApp('Back')">◀</span>
           <span onclick="openApp('Home')">⬤</span>
           <span onclick="openApp('Recents')">▣</span>
         </div>
+      </div>
+
+      <!-- App Screen -->
+      <div id="appscreen">
+        <div id="appscreen-header">
+          <span onclick="openApp('Back')">◀</span>
+          <span id="appscreen-title">App</span>
+        </div>
+        <div id="appscreen-content"></div>
       </div>
 
     </div>
