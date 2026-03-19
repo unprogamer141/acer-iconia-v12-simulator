@@ -1,4 +1,3 @@
-// Update clock every second
 function updateClock() {
   const now = new Date();
   let hours = now.getHours();
@@ -18,7 +17,6 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// Swipe up to unlock
 let startY = 0;
 document.getElementById('lockscreen').addEventListener('touchstart', (e) => {
   startY = e.touches[0].clientY;
@@ -32,11 +30,19 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   }
 });
 
-// App launcher
 function openApp(appName) {
   const appScreen = document.getElementById('appscreen');
   const appTitle = document.getElementById('appscreen-title');
   const appContent = document.getElementById('appscreen-content');
+
+  if (appName === 'Home') {
+    appScreen.style.display = 'none';
+    return;
+  }
+  if (appName === 'Back') {
+    appScreen.style.display = 'none';
+    return;
+  }
 
   const apps = {
     'Settings': `
@@ -50,25 +56,16 @@ function openApp(appName) {
       <div class="setting-item">💾 Storage <span>256GB</span></div>
       <div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>
     `,
-    'Camera': `<div class="app-placeholder">📷 Camera Viewfinder<br><br>8MP Rear | 5MP Front</div>`,
-    'Gallery': `<div class="app-placeholder">🖼️ No Photos Yet</div>`,
-    'Files': `<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>`,
-    'Browser': `<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>`,
-    'Calculator': `<div class="app-placeholder">🧮 Calculator<br><br>Coming Soon</div>`,
-    'Clock': `<div class="app-placeholder">🕐 Clock<br><br>Alarm | Timer | Stopwatch</div>`,
-    'Music': `<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>`,
-    'Notes': `<div class="app-placeholder">📝 Notes<br><br>No Notes Yet</div>`,
-    'Maps': `<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>`,
+    'Camera': '<div class="app-placeholder">📷 Camera<br><br>8MP Rear | 5MP Front</div>',
+    'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
+    'Files': '<div class="app-placeholder">📁 Internal Storage<br><br>256GB Total | 200GB Free</div>',
+    'Browser': '<div class="app-placeholder">🌐 Browser<br><br>Enter a URL to browse</div>',
+    'Calculator': '<div class="app-placeholder">🧮 Calculator<br><br>Coming Soon</div>',
+    'Clock': '<div class="app-placeholder">🕐 Clock<br><br>Alarm | Timer | Stopwatch</div>',
+    'Music': '<div class="app-placeholder">🎵 Music Player<br><br>No Music Found</div>',
+    'Notes': '<div class="app-placeholder">📝 Notes<br><br>No Notes Yet</div>',
+    'Maps': '<div class="app-placeholder">🗺️ Maps<br><br>Location Services On</div>',
   };
-
-  if (appName === 'Home') {
-    appScreen.style.display = 'none';
-    return;
-  }
-  if (appName === 'Back') {
-    appScreen.style.display = 'none';
-    return;
-  }
 
   if (apps[appName]) {
     appTitle.textContent = appName;
