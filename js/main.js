@@ -26,5 +26,11 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   const endY = e.changedTouches[0].clientY;
   if (startY - endY > 50) {
     document.getElementById('lockscreen').style.display = 'none';
+    document.getElementById('homescreen').style.display = 'flex';
   }
 });
+
+// App launcher
+function openApp(appName) {
+  alert(appName + ' is opening...');
+}

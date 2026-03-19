@@ -68,3 +68,55 @@ body {
   50% { opacity: 1; }
   100% { opacity: 0.6; }
 }
+
+#homescreen {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+
+#statusbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 15px;
+  background: rgba(0,0,0,0.4);
+  font-size: 13px;
+}
+
+#appgrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 30px 20px;
+  flex: 1;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  gap: 5px;
+}
+
+.app span {
+  font-size: 11px;
+  text-align: center;
+}
+
+.app:first-child {
+  font-size: 30px;
+}
+
+#navbar {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: rgba(0,0,0,0.5);
+  font-size: 20px;
+  cursor: pointer;
+}
