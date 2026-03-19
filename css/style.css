@@ -14,11 +14,12 @@ body {
 }
 
 #tablet {
-  width: 700px;
-  height: 1050px;
+  width: 95vw;
+  max-width: 700px;
+  height: 95vh;
   background: #2d4a3e;
   border-radius: 20px;
-  padding: 15px;
+  padding: 12px;
   box-shadow: 0 0 60px rgba(0,0,0,0.8);
   border: 2px solid #444;
 }
@@ -44,21 +45,21 @@ body {
 }
 
 #clock {
-  font-size: 80px;
+  font-size: 60px;
   font-weight: 300;
   letter-spacing: 5px;
 }
 
 #date {
-  font-size: 20px;
+  font-size: 16px;
   margin-top: 10px;
   opacity: 0.8;
 }
 
 #unlock-hint {
   position: absolute;
-  bottom: 60px;
-  font-size: 16px;
+  bottom: 40px;
+  font-size: 14px;
   opacity: 0.6;
   animation: pulse 2s infinite;
 }
@@ -81,17 +82,18 @@ body {
 #statusbar {
   display: flex;
   justify-content: space-between;
-  padding: 8px 15px;
+  padding: 6px 12px;
   background: rgba(0,0,0,0.4);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 #appgrid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  padding: 30px 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px 15px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .app {
@@ -99,23 +101,26 @@ body {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  font-size: 12px;
   gap: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  padding: 10px 5px;
+}
+
+.app div {
+  font-size: 28px;
 }
 
 .app span {
   font-size: 11px;
   text-align: center;
-}
-
-.app:first-child {
-  font-size: 30px;
+  color: white;
 }
 
 #navbar {
   display: flex;
   justify-content: space-around;
-  padding: 15px;
+  padding: 12px;
   background: rgba(0,0,0,0.5);
   font-size: 20px;
   cursor: pointer;
