@@ -5,7 +5,7 @@
 }
 
 body {
-  background: #1a1a1a;
+  background: #111;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,18 +17,36 @@ body {
   width: 95vw;
   max-width: 700px;
   height: 95vh;
-  background: #2d4a3e;
-  border-radius: 20px;
+  background: linear-gradient(145deg, #3a5f4e, #2d4a3e);
+  border-radius: 22px;
   padding: 12px;
-  box-shadow: 0 0 60px rgba(0,0,0,0.8);
-  border: 2px solid #444;
+  box-shadow: 0 0 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+  border: 2px solid #3a5f4e;
+  position: relative;
+}
+
+#power-btn {
+  position: absolute;
+  right: -12px;
+  top: 80px;
+  background: #2d4a3e;
+  color: #83b735;
+  width: 12px;
+  height: 40px;
+  border-radius: 0 6px 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  border: 1px solid #444;
 }
 
 #screen {
   width: 100%;
   height: 100%;
   background: #000;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
 }
@@ -50,14 +68,14 @@ body {
 
 #boot-logo {
   font-size: 60px;
-  font-weight: bold;
+  font-weight: 700;
   color: #83b735;
   letter-spacing: 8px;
   animation: fadeIn 1s ease-in;
 }
 
 #boot-tagline {
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0.5;
   margin-top: 10px;
   letter-spacing: 3px;
@@ -104,6 +122,7 @@ body {
   z-index: 50;
   width: 70%;
   gap: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
 .power-option {
@@ -114,8 +133,10 @@ body {
   border-radius: 12px;
   cursor: pointer;
   background: rgba(255,255,255,0.1);
+  transition: opacity 0.2s;
 }
 
+.power-option:active { opacity: 0.7; }
 .power-option:first-child { background: #e74c3c; }
 .power-option:nth-child(2) { background: #f0a500; }
 
@@ -143,32 +164,35 @@ body {
   justify-content: center;
   align-items: center;
   color: white;
+  position: relative;
 }
 
 #clock {
-  font-size: 60px;
+  font-size: 64px;
   font-weight: 300;
-  letter-spacing: 5px;
+  letter-spacing: 4px;
 }
 
 #date {
   font-size: 16px;
   margin-top: 10px;
-  opacity: 0.8;
+  opacity: 0.7;
+  font-weight: 300;
 }
 
 #unlock-hint {
   position: absolute;
-  bottom: 40px;
+  bottom: 50px;
   font-size: 14px;
-  opacity: 0.6;
+  opacity: 0.5;
   animation: pulse 2s infinite;
+  letter-spacing: 1px;
 }
 
 @keyframes pulse {
-  0% { opacity: 0.6; }
+  0% { opacity: 0.5; }
   50% { opacity: 1; }
-  100% { opacity: 0.6; }
+  100% { opacity: 0.5; }
 }
 
 #homescreen {
@@ -183,10 +207,11 @@ body {
 #statusbar {
   display: flex;
   justify-content: space-between;
-  padding: 6px 12px;
-  background: rgba(0,0,0,0.4);
+  padding: 6px 14px;
+  background: rgba(0,0,0,0.5);
   font-size: 12px;
   cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
 #appgrid {
@@ -205,24 +230,31 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  gap: 5px;
+  gap: 6px;
   background: rgba(255,255,255,0.1);
-  border-radius: 15px;
+  border-radius: 18px;
   padding: 10px 5px;
-  height: 80px;
+  height: 82px;
+  transition: transform 0.1s, background 0.2s;
+  backdrop-filter: blur(5px);
 }
 
+.app:active { transform: scale(0.93); background: rgba(255,255,255,0.2); }
 .app div { font-size: 28px; }
-.app span { font-size: 11px; text-align: center; color: white; }
+.app span { font-size: 11px; text-align: center; color: rgba(255,255,255,0.9); font-weight: 400; }
 
 #navbar {
   display: flex;
   justify-content: space-around;
-  padding: 12px;
-  background: rgba(0,0,0,0.5);
+  padding: 14px;
+  background: rgba(0,0,0,0.6);
   font-size: 20px;
   cursor: pointer;
+  backdrop-filter: blur(10px);
 }
+
+#navbar span { transition: opacity 0.2s; }
+#navbar span:active { opacity: 0.5; }
 
 #notipanel {
   display: none;
@@ -231,35 +263,37 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(15,20,30,0.97);
+  background: rgba(10,15,25,0.97);
   color: white;
   z-index: 20;
   border-radius: 0 0 20px 20px;
   padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 #notipanel-header {
   display: flex;
   justify-content: space-between;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 15px;
 }
 
 .noti-toggles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 15px;
 }
 
 .noti-toggle {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   border-radius: 10px;
   padding: 10px;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .noti-toggle.active { background: #1a73e8; }
@@ -280,7 +314,7 @@ body {
 
 .noti-item {
   padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   font-size: 13px;
 }
 
@@ -292,7 +326,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #1a1a2e;
+  background: #12182b;
   color: white;
   z-index: 10;
 }
@@ -301,15 +335,16 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 10px 15px;
-  background: rgba(0,0,0,0.4);
+  padding: 12px 15px;
+  background: rgba(0,0,0,0.5);
   font-size: 16px;
   cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
 #appscreen-title {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 #appscreen-content {
@@ -321,31 +356,33 @@ body {
 .setting-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 15px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   font-size: 15px;
 }
 
-.setting-item span { opacity: 0.6; }
+.setting-item span { opacity: 0.5; font-size: 13px; }
 
 .app-placeholder {
   text-align: center;
   margin-top: 100px;
   font-size: 18px;
-  opacity: 0.7;
-  line-height: 2;
+  opacity: 0.6;
+  line-height: 2.5;
 }
 
 #calc-display {
-  background: #000;
+  background: rgba(0,0,0,0.5);
   color: white;
   font-size: 40px;
   text-align: right;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 15px;
-  min-height: 70px;
+  min-height: 75px;
   word-break: break-all;
+  font-weight: 300;
 }
 
 .calc-grid {
@@ -355,39 +392,42 @@ body {
 }
 
 .calc-btn {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 22px;
   padding: 18px;
   cursor: pointer;
+  transition: opacity 0.1s;
 }
 
-.calc-btn.op { background: #f0a500; color: white; }
-.calc-btn.red { background: #e74c3c; color: white; }
+.calc-btn:active { opacity: 0.6; }
+.calc-btn.op { background: #f0a500; }
+.calc-btn.red { background: #e74c3c; }
 
 .note-item {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  padding: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 14px;
   margin-bottom: 10px;
 }
 
 .note-text { font-size: 15px; margin-bottom: 5px; }
-.note-time { font-size: 11px; opacity: 0.5; }
+.note-time { font-size: 11px; opacity: 0.4; }
 
 .clock-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
 
 .clock-tab {
   flex: 1;
   padding: 10px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 15px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .clock-tab.active { background: #f0a500; }
@@ -395,14 +435,16 @@ body {
 .clock-btn {
   padding: 12px 25px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
   color: white;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
   margin: 5px;
+  transition: opacity 0.2s;
 }
 
+.clock-btn:active { opacity: 0.6; }
 .clock-btn.green { background: #27ae60; }
 .clock-btn.red { background: #e74c3c; }
 
@@ -411,12 +453,12 @@ body {
   justify-content: space-between;
   font-size: 13px;
   margin-bottom: 8px;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .file-storage-fill {
   width: 100%;
-  height: 8px;
+  height: 6px;
   background: rgba(255,255,255,0.1);
   border-radius: 10px;
   margin-bottom: 20px;
@@ -432,7 +474,7 @@ body {
 .files-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: 12px;
 }
 
 .folder-item {
@@ -440,15 +482,17 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
-  border-radius: 15px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
   padding: 15px 5px;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 28px;
   gap: 8px;
+  transition: background 0.2s;
 }
 
-.folder-item span { font-size: 12px; color: white; }
+.folder-item:active { background: rgba(255,255,255,0.15); }
+.folder-item span { font-size: 12px; color: rgba(255,255,255,0.8); }
 
 .file-header {
   font-size: 16px;
@@ -456,12 +500,14 @@ body {
   margin-bottom: 10px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   cursor: pointer;
+  opacity: 0.8;
 }
 
 .file-item {
   padding: 12px 10px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
   font-size: 14px;
+  opacity: 0.8;
 }
 
 .browser-bar {
@@ -478,7 +524,7 @@ body {
 
 .gallery-time {
   font-size: 9px;
-  opacity: 0.6;
+  opacity: 0.5;
   text-align: center;
   margin-top: 3px;
 }
