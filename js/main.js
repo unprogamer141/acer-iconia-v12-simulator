@@ -149,10 +149,7 @@ function dialPress(val) {
   if (val === 'DEL') {
     dialValue = dialValue.slice(0, -1);
   } else if (val === 'CALL') {
-    if (dialValue) {
-      alert('📞 Calling ' + dialValue + '...');
-      dialValue = '';
-    }
+    if (dialValue) { alert('📞 Calling ' + dialValue + '...'); dialValue = ''; }
   } else {
     dialValue += val;
   }
@@ -187,51 +184,30 @@ function buildCalendar(date) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date();
-
   let html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">' +
     '<button onclick="changeMonth(-1)" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:18px;">◀</button>' +
     '<div style="font-size:18px;font-weight:500;">' + months[month] + ' ' + year + '</div>' +
     '<button onclick="changeMonth(1)" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:18px;">▶</button>' +
     '</div>';
-
   html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
-  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
-    html += '<div style="font-size:12px;opacity:0.5;padding:5px;">' + d + '</div>';
-  });
-
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => { html += '<div style="font-size:12px;opacity:0.5;padding:5px;">' + d + '</div>'; });
   for (let i = 0; i < firstDay; i++) { html += '<div></div>'; }
-
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-    html += '<div onclick="selectDay(' + d + ')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:14px;' +
-      (isToday ? 'background:#1a73e8;color:white;font-weight:bold;' : 'background:rgba(255,255,255,0.05);') +
-      '">' + d + '</div>';
+    html += '<div onclick="selectDay(' + d + ')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:14px;' + (isToday ? 'background:#1a73e8;color:white;font-weight:bold;' : 'background:rgba(255,255,255,0.05);') + '">' + d + '</div>';
   }
   html += '</div>';
-
   const events = JSON.parse(localStorage.getItem('calEvents') || '{}');
   const key = year + '-' + month;
-  html += '<div style="margin-top:20px;">';
-  html += '<input id="event-input" type="text" placeholder="Add event..." style="width:100%;padding:10px;border-radius:10px;border:none;font-size:14px;background:#0f2027;color:white;margin-bottom:8px;"/>';
-  html += '<button onclick="addEvent()" style="width:100%;padding:10px;background:#1a73e8;color:white;border:none;border-radius:10px;font-size:14px;cursor:pointer;">➕ Add Event</button>';
-  if (events[key]) {
-    html += '<div style="margin-top:10px;">' + events[key].map(e => '<div style="padding:8px;background:rgba(255,255,255,0.08);border-radius:8px;margin-bottom:5px;font-size:13px;">📅 ' + e + '</div>').join('') + '</div>';
-  }
+  html += '<div style="margin-top:20px;"><input id="event-input" type="text" placeholder="Add event..." style="width:100%;padding:10px;border-radius:10px;border:none;font-size:14px;background:#0f2027;color:white;margin-bottom:8px;"/><button onclick="addEvent()" style="width:100%;padding:10px;background:#1a73e8;color:white;border:none;border-radius:10px;font-size:14px;cursor:pointer;">➕ Add Event</button>';
+  if (events[key]) { html += '<div style="margin-top:10px;">' + events[key].map(e => '<div style="padding:8px;background:rgba(255,255,255,0.08);border-radius:8px;margin-bottom:5px;font-size:13px;">📅 ' + e + '</div>').join('') + '</div>'; }
   html += '</div>';
-
   const el = document.getElementById('calendar-content');
   if (el) el.innerHTML = html;
 }
 
-function changeMonth(dir) {
-  calendarDate.setMonth(calendarDate.getMonth() + dir);
-  buildCalendar(calendarDate);
-}
-
-function selectDay(day) {
-  alert('📅 ' + day + ' ' + calendarDate.toLocaleString('default', { month: 'long' }) + ' ' + calendarDate.getFullYear());
-}
-
+function changeMonth(dir) { calendarDate.setMonth(calendarDate.getMonth() + dir); buildCalendar(calendarDate); }
+function selectDay(day) { alert('📅 ' + day + ' ' + calendarDate.toLocaleString('default', { month: 'long' }) + ' ' + calendarDate.getFullYear()); }
 function addEvent() {
   const input = document.getElementById('event-input');
   if (!input || !input.value.trim()) return;
@@ -246,17 +222,108 @@ function addEvent() {
 
 const calendarHTML = '<div id="calendar-content"></div>';
 
+// Drawing App
+let isDrawing = false;
+let drawCtx = null;
+let lastX = 0, lastY = 0;
+let drawColor = '#ffffff';
+let drawSize = 4;
+let drawMode = 'pen';
+
+function initDrawing() {
+  const canvas = document.getElementById('draw-canvas');
+  if (!canvas) return;
+  drawCtx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  drawCtx.fillStyle = '#1a1a2e';
+  drawCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.touches[0].clientX - rect.left;
+    lastY = e.touches[0].clientY - rect.top;
+  });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
+    drawCtx.beginPath();
+    drawCtx.moveTo(lastX, lastY);
+    drawCtx.lineTo(x, y);
+    drawCtx.strokeStyle = drawMode === 'eraser' ? '#1a1a2e' : drawColor;
+    drawCtx.lineWidth = drawMode === 'eraser' ? 30 : drawSize;
+    drawCtx.lineCap = 'round';
+    drawCtx.stroke();
+    lastX = x;
+    lastY = y;
+  });
+
+  canvas.addEventListener('touchend', () => { isDrawing = false; });
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.clientX - rect.left;
+    lastY = e.clientY - rect.top;
+  });
+  canvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    drawCtx.beginPath();
+    drawCtx.moveTo(lastX, lastY);
+    drawCtx.lineTo(x, y);
+    drawCtx.strokeStyle = drawMode === 'eraser' ? '#1a1a2e' : drawColor;
+    drawCtx.lineWidth = drawMode === 'eraser' ? 30 : drawSize;
+    drawCtx.lineCap = 'round';
+    drawCtx.stroke();
+    lastX = x;
+    lastY = y;
+  });
+  canvas.addEventListener('mouseup', () => { isDrawing = false; });
+}
+
+function setDrawColor(color) {
+  drawColor = color;
+  drawMode = 'pen';
+}
+
+function setDrawMode(mode) {
+  drawMode = mode;
+}
+
+function clearCanvas() {
+  if (!drawCtx) return;
+  const canvas = document.getElementById('draw-canvas');
+  drawCtx.fillStyle = '#1a1a2e';
+  drawCtx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+const drawingHTML =
+  '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">' +
+  '<button onclick="setDrawMode(\'pen\')" style="padding:8px 12px;background:#1a73e8;border:none;color:white;border-radius:8px;cursor:pointer;font-size:13px;">✏️ Pen</button>' +
+  '<button onclick="setDrawMode(\'eraser\')" style="padding:8px 12px;background:#555;border:none;color:white;border-radius:8px;cursor:pointer;font-size:13px;">⬜ Eraser</button>' +
+  '<button onclick="clearCanvas()" style="padding:8px 12px;background:#e74c3c;border:none;color:white;border-radius:8px;cursor:pointer;font-size:13px;">🗑️ Clear</button>' +
+  '</div>' +
+  '<div style="display:flex;gap:6px;margin-bottom:10px;">' +
+  ['#ffffff','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#f0a500','#83b735'].map(c =>
+    '<div onclick="setDrawColor(\'' + c + '\')" style="width:28px;height:28px;border-radius:50%;background:' + c + ';cursor:pointer;border:2px solid rgba(255,255,255,0.3);"></div>'
+  ).join('') +
+  '</div>' +
+  '<canvas id="draw-canvas" style="width:100%;height:400px;border-radius:12px;touch-action:none;cursor:crosshair;"></canvas>';
+
 let battery = 100;
 let charging = false;
 
 function updateBattery() {
-  if (!charging) {
-    battery -= 0.1;
-    if (battery < 0) battery = 0;
-  } else {
-    battery += 0.5;
-    if (battery > 100) battery = 100;
-  }
+  if (!charging) { battery -= 0.1; if (battery < 0) battery = 0; }
+  else { battery += 0.5; if (battery > 100) battery = 100; }
   const battStr = Math.round(battery) + '%';
   const icon = charging ? '🔌' : (battery > 20 ? '🔋' : '🪫');
   const el = document.getElementById('status-icons');
@@ -330,7 +397,7 @@ function getAppIcon(name) {
     'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
     'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
     'Notes': '📝', 'Maps': '🗺️', 'About': '📱', 'Wallpaper': '🎨',
-    'Contacts': '👥', 'Calendar': '📅', 'Dialer': '📞'
+    'Contacts': '👥', 'Calendar': '📅', 'Dialer': '📞', 'Drawing': '🎨'
   };
   return icons[name] || '📱';
 }
@@ -546,8 +613,7 @@ function mapSearch() {
 const aboutHTML =
   '<div style="text-align:center;padding:15px 0;margin-bottom:10px;">' +
   '<div style="font-size:50px;font-weight:bold;color:#83b735;letter-spacing:4px;">Acer</div>' +
-  '<div style="font-size:18px;margin-top:5px;">Iconia V12</div>' +
-  '</div>' +
+  '<div style="font-size:18px;margin-top:5px;">Iconia V12</div></div>' +
   '<div class="setting-item">📱 Model <span>Acer Iconia V12</span></div>' +
   '<div class="setting-item">🖥️ Display <span>11.97" IPS 2000x1200 90Hz</span></div>' +
   '<div class="setting-item">⚡ Processor <span>MediaTek Helio G99</span></div>' +
@@ -624,6 +690,7 @@ function openApp(appName) {
     'Contacts': contactsHTML,
     'Calendar': calendarHTML,
     'Dialer': dialerHTML,
+    'Drawing': drawingHTML,
   };
 
   if (apps[appName]) {
@@ -634,9 +701,8 @@ function openApp(appName) {
     if (appName === 'Gallery') loadGallery();
     if (appName === 'Contacts') loadContacts();
     if (appName === 'Calendar') buildCalendar(calendarDate);
-    if (appName === 'Dialer' && dialValue) {
-      document.getElementById('dial-display').textContent = dialValue;
-    }
+    if (appName === 'Drawing') setTimeout(initDrawing, 100);
+    if (appName === 'Dialer' && dialValue) { document.getElementById('dial-display').textContent = dialValue; }
     if (appName === 'Camera') { appContent.style.padding = '0'; startCamera(); }
     if (appName === 'Browser' || appName === 'Maps') { appContent.style.display = 'flex'; appContent.style.flexDirection = 'column'; }
   }
