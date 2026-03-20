@@ -99,8 +99,52 @@ const wallpaperHTML = '<div style="margin-bottom:15px;font-size:16px;opacity:0.8
   '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">' +
   wallpapers.map(w =>
     '<div onclick="applyWallpaper(\'' + w.gradient + '\')" style="height:80px;border-radius:12px;background:' + w.gradient + ';display:flex;align-items:flex-end;padding:8px;cursor:pointer;"><span style="font-size:12px;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8);">' + w.name + '</span></div>'
-  ).join('') +
-  '</div>';
+  ).join('') + '</div>';
+
+function saveContact() {
+  const name = document.getElementById('contact-name').value;
+  const phone = document.getElementById('contact-phone').value;
+  if (!name.trim() || !phone.trim()) { alert('Please enter name and phone number!'); return; }
+  const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+  contacts.push({ name, phone, time: new Date().toLocaleString() });
+  localStorage.setItem('contacts', JSON.stringify(contacts));
+  document.getElementById('contact-name').value = '';
+  document.getElementById('contact-phone').value = '';
+  loadContacts();
+}
+
+function deleteContact(index) {
+  const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+  contacts.splice(index, 1);
+  localStorage.setItem('contacts', JSON.stringify(contacts));
+  loadContacts();
+}
+
+function loadContacts() {
+  const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+  const list = document.getElementById('contacts-list');
+  if (!list) return;
+  if (contacts.length === 0) {
+    list.innerHTML = '<div style="text-align:center;opacity:0.5;padding:20px;">No contacts yet</div>';
+    return;
+  }
+  list.innerHTML = contacts.map((c, i) =>
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:15px 10px;border-bottom:1px solid rgba(255,255,255,0.07);">' +
+    '<div><div style="font-size:16px;">👤 ' + c.name + '</div><div style="font-size:13px;opacity:0.5;margin-top:3px;">📞 ' + c.phone + '</div></div>' +
+    '<div style="display:flex;gap:10px;">' +
+    '<button onclick="alert(\'Calling ' + c.name + '...\')" style="background:#27ae60;border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;">📞</button>' +
+    '<button onclick="deleteContact(' + i + ')" style="background:#e74c3c;border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;">🗑️</button>' +
+    '</div></div>'
+  ).join('');
+}
+
+const contactsHTML =
+  '<div style="margin-bottom:15px;">' +
+  '<input id="contact-name" type="text" placeholder="Full Name" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:15px;background:#0f2027;color:white;margin-bottom:8px;"/>' +
+  '<input id="contact-phone" type="tel" placeholder="Phone Number" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:15px;background:#0f2027;color:white;margin-bottom:8px;"/>' +
+  '<button onclick="saveContact()" style="width:100%;padding:12px;background:#1a73e8;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;">➕ Add Contact</button>' +
+  '</div>' +
+  '<div id="contacts-list"></div>';
 
 let battery = 100;
 let charging = false;
@@ -185,7 +229,8 @@ function getAppIcon(name) {
   const icons = {
     'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
     'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
-    'Notes': '📝', 'Maps': '🗺️', 'About': '📱', 'Wallpaper': '🎨'
+    'Notes': '📝', 'Maps': '🗺️', 'About': '📱', 'Wallpaper': '🎨',
+    'Contacts': '👥', 'Calendar': '📅', 'Dialer': '📞'
   };
   return icons[name] || '📱';
 }
@@ -476,6 +521,7 @@ function openApp(appName) {
     'Notes': notesHTML,
     'Maps': mapsHTML,
     'Battery': batteryHTML,
+    'Contacts': contactsHTML,
   };
 
   if (apps[appName]) {
@@ -484,6 +530,7 @@ function openApp(appName) {
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
     if (appName === 'Gallery') loadGallery();
+    if (appName === 'Contacts') loadContacts();
     if (appName === 'Camera') { appContent.style.padding = '0'; startCamera(); }
     if (appName === 'Browser' || appName === 'Maps') { appContent.style.display = 'flex'; appContent.style.flexDirection = 'column'; }
   }
