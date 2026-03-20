@@ -13,6 +13,78 @@ window.addEventListener('load', () => {
   }, 3000);
 });
 
+// Long press power button simulation
+let powerHold;
+document.getElementById('tablet').addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    powerHold = setTimeout(() => { openPowerMenu(); }, 1000);
+  }
+});
+document.getElementById('tablet').addEventListener('touchend', () => {
+  clearTimeout(powerHold);
+});
+
+function openPowerMenu() {
+  document.getElementById('powermenu').style.display = 'flex';
+}
+
+function closePowerMenu() {
+  document.getElementById('powermenu').style.display = 'none';
+}
+
+function powerOff() {
+  closePowerMenu();
+  const screen = document.getElementById('screen');
+  screen.style.transition = 'opacity 1s';
+  screen.style.opacity = '0';
+  setTimeout(() => {
+    screen.style.opacity = '1';
+    document.getElementById('homescreen').style.display = 'none';
+    document.getElementById('lockscreen').style.display = 'none';
+    document.getElementById('appscreen').style.display = 'none';
+    document.getElementById('bootscreen').style.display = 'none';
+    document.getElementById('poweroff-screen').style.display = 'flex';
+  }, 1000);
+}
+
+function restartDevice() {
+  closePowerMenu();
+  const screen = document.getElementById('screen');
+  screen.style.transition = 'opacity 0.5s';
+  screen.style.opacity = '0';
+  setTimeout(() => {
+    screen.style.opacity = '1';
+    document.getElementById('homescreen').style.display = 'none';
+    document.getElementById('lockscreen').style.display = 'none';
+    document.getElementById('appscreen').style.display = 'none';
+    document.getElementById('poweroff-screen').style.display = 'none';
+    document.getElementById('bootscreen').style.display = 'flex';
+    document.getElementById('bootscreen').style.opacity = '1';
+    setTimeout(() => {
+      document.getElementById('bootscreen').style.transition = 'opacity 1s';
+      document.getElementById('bootscreen').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('bootscreen').style.display = 'none';
+        document.getElementById('lockscreen').style.display = 'flex';
+      }, 1000);
+    }, 3000);
+  }, 500);
+}
+
+function bootDevice() {
+  document.getElementById('poweroff-screen').style.display = 'none';
+  document.getElementById('bootscreen').style.display = 'flex';
+  document.getElementById('bootscreen').style.opacity = '1';
+  setTimeout(() => {
+    document.getElementById('bootscreen').style.transition = 'opacity 1s';
+    document.getElementById('bootscreen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('bootscreen').style.display = 'none';
+      document.getElementById('lockscreen').style.display = 'flex';
+    }, 1000);
+  }, 3000);
+}
+
 let battery = 100;
 let charging = false;
 
