@@ -77,6 +77,31 @@ function bootDevice() {
   }, 3000);
 }
 
+const wallpapers = [
+  { name: 'Ocean', gradient: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)' },
+  { name: 'Sunset', gradient: 'linear-gradient(135deg, #f093fb, #f5576c, #fda085)' },
+  { name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e, #71b280)' },
+  { name: 'Night', gradient: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)' },
+  { name: 'Aurora', gradient: 'linear-gradient(135deg, #00c6ff, #0072ff)' },
+  { name: 'Volcano', gradient: 'linear-gradient(135deg, #f12711, #f5af19)' },
+  { name: 'Mint', gradient: 'linear-gradient(135deg, #2af598, #009efd)' },
+  { name: 'Candy', gradient: 'linear-gradient(135deg, #a18cd1, #fbc2eb)' },
+];
+
+function applyWallpaper(gradient) {
+  document.getElementById('homescreen').style.background = gradient;
+  document.getElementById('lockscreen').style.background = gradient;
+  localStorage.setItem('wallpaper', gradient);
+  alert('✅ Wallpaper applied!');
+}
+
+const wallpaperHTML = '<div style="margin-bottom:15px;font-size:16px;opacity:0.8;">Choose a wallpaper:</div>' +
+  '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">' +
+  wallpapers.map(w =>
+    '<div onclick="applyWallpaper(\'' + w.gradient + '\')" style="height:80px;border-radius:12px;background:' + w.gradient + ';display:flex;align-items:flex-end;padding:8px;cursor:pointer;"><span style="font-size:12px;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8);">' + w.name + '</span></div>'
+  ).join('') +
+  '</div>';
+
 let battery = 100;
 let charging = false;
 
@@ -113,6 +138,12 @@ function updateClock() {
 
 setInterval(updateClock, 1000);
 updateClock();
+
+const savedWallpaper = localStorage.getItem('wallpaper');
+if (savedWallpaper) {
+  document.getElementById('homescreen').style.background = savedWallpaper;
+  document.getElementById('lockscreen').style.background = savedWallpaper;
+}
 
 let startY = 0;
 document.getElementById('lockscreen').addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
@@ -154,7 +185,7 @@ function getAppIcon(name) {
   const icons = {
     'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
     'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
-    'Notes': '📝', 'Maps': '🗺️', 'About': '📱'
+    'Notes': '📝', 'Maps': '🗺️', 'About': '📱', 'Wallpaper': '🎨'
   };
   return icons[name] || '📱';
 }
@@ -389,7 +420,7 @@ const aboutHTML =
   '<div class="setting-item">💻 Build <span>Aluminum Chassis</span></div>';
 
 const settingsHTML =
-  '<div class="setting-item" onclick="openApp(\'About\')">📶 WiFi <span>Connected ›</span></div>' +
+  '<div class="setting-item">📶 WiFi <span>Connected</span></div>' +
   '<div class="setting-item">🔵 Bluetooth <span>On</span></div>' +
   '<div class="setting-item">🔆 Brightness <span>80%</span></div>' +
   '<div class="setting-item">🔊 Volume <span>60%</span></div>' +
@@ -397,7 +428,8 @@ const settingsHTML =
   '<div class="setting-item">📍 Location <span>On</span></div>' +
   '<div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div>' +
   '<div class="setting-item">💾 Storage <span>256GB</span></div>' +
-  '<div class="setting-item" onclick="openApp(\'About\')">📱 About Device <span>Acer Iconia V12 ›</span></div>';
+  '<div class="setting-item" onclick="openApp(\'Wallpaper\')" style="cursor:pointer;">🎨 Wallpaper <span>Change ›</span></div>' +
+  '<div class="setting-item" onclick="openApp(\'About\')" style="cursor:pointer;">📱 About Device <span>Acer Iconia V12 ›</span></div>';
 
 const cameraHTML = '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;"><div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div><canvas id="camera-canvas" style="display:none;"></canvas><video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video><div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;"><div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div></div><div style="display:flex;justify-content:space-around;align-items:center;padding:15px;background:#111;"><button onclick="switchCamera()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;cursor:pointer;">🔄</button><button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button><button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button></div></div>';
 
@@ -433,6 +465,7 @@ function openApp(appName) {
   const apps = {
     'Settings': settingsHTML,
     'About': aboutHTML,
+    'Wallpaper': wallpaperHTML,
     'Camera': cameraHTML,
     'Gallery': galleryHTML,
     'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
