@@ -130,7 +130,7 @@ function loadContacts() {
     '<div style="display:flex;justify-content:space-between;align-items:center;padding:15px 10px;border-bottom:1px solid rgba(255,255,255,0.07);">' +
     '<div><div style="font-size:16px;">👤 ' + c.name + '</div><div style="font-size:13px;opacity:0.5;margin-top:3px;">📞 ' + c.phone + '</div></div>' +
     '<div style="display:flex;gap:10px;">' +
-    '<button onclick="alert(\'Calling ' + c.name + '...\')" style="background:#27ae60;border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;">📞</button>' +
+    '<button onclick="dialNumber(\'' + c.phone + '\')" style="background:#27ae60;border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;">📞</button>' +
     '<button onclick="deleteContact(' + i + ')" style="background:#e74c3c;border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;">🗑️</button>' +
     '</div></div>'
   ).join('');
@@ -143,6 +143,40 @@ const contactsHTML =
   '<button onclick="saveContact()" style="width:100%;padding:12px;background:#1a73e8;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;">➕ Add Contact</button>' +
   '</div>' +
   '<div id="contacts-list"></div>';
+
+let dialValue = '';
+function dialPress(val) {
+  if (val === 'DEL') {
+    dialValue = dialValue.slice(0, -1);
+  } else if (val === 'CALL') {
+    if (dialValue) {
+      alert('📞 Calling ' + dialValue + '...');
+      dialValue = '';
+    }
+  } else {
+    dialValue += val;
+  }
+  const display = document.getElementById('dial-display');
+  if (display) display.textContent = dialValue || 'Enter number';
+}
+
+function dialNumber(num) {
+  dialValue = num;
+  openApp('Dialer');
+}
+
+const dialerHTML =
+  '<div id="dial-display" style="font-size:28px;text-align:center;padding:20px 10px;min-height:70px;word-break:break-all;opacity:0.9;">Enter number</div>' +
+  '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">' +
+  ['1','2','3','4','5','6','7','8','9','*','0','#'].map(k =>
+    '<button onclick="dialPress(\'' + k + '\')" style="padding:18px;background:rgba(255,255,255,0.1);border:none;color:white;border-radius:15px;font-size:22px;cursor:pointer;">' + k + '</button>'
+  ).join('') +
+  '</div>' +
+  '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">' +
+  '<button onclick="dialPress(\'DEL\')" style="padding:15px;background:rgba(255,255,255,0.1);border:none;color:white;border-radius:15px;font-size:18px;cursor:pointer;">⌫</button>' +
+  '<button onclick="dialPress(\'CALL\')" style="padding:15px;background:#27ae60;border:none;color:white;border-radius:15px;font-size:24px;cursor:pointer;">📞</button>' +
+  '<button onclick="dialValue=\'\';document.getElementById(\'dial-display\').textContent=\'Enter number\'" style="padding:15px;background:#e74c3c;border:none;color:white;border-radius:15px;font-size:18px;cursor:pointer;">✕</button>' +
+  '</div>';
 
 let calendarDate = new Date();
 
@@ -165,9 +199,7 @@ function buildCalendar(date) {
     html += '<div style="font-size:12px;opacity:0.5;padding:5px;">' + d + '</div>';
   });
 
-  for (let i = 0; i < firstDay; i++) {
-    html += '<div></div>';
-  }
+  for (let i = 0; i < firstDay; i++) { html += '<div></div>'; }
 
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
@@ -175,7 +207,6 @@ function buildCalendar(date) {
       (isToday ? 'background:#1a73e8;color:white;font-weight:bold;' : 'background:rgba(255,255,255,0.05);') +
       '">' + d + '</div>';
   }
-
   html += '</div>';
 
   const events = JSON.parse(localStorage.getItem('calEvents') || '{}');
@@ -299,7 +330,7 @@ function getAppIcon(name) {
     'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
     'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
     'Notes': '📝', 'Maps': '🗺️', 'About': '📱', 'Wallpaper': '🎨',
-    'Contacts': '👥', 'Calendar': '📅'
+    'Contacts': '👥', 'Calendar': '📅', 'Dialer': '📞'
   };
   return icons[name] || '📱';
 }
@@ -592,6 +623,7 @@ function openApp(appName) {
     'Battery': batteryHTML,
     'Contacts': contactsHTML,
     'Calendar': calendarHTML,
+    'Dialer': dialerHTML,
   };
 
   if (apps[appName]) {
@@ -602,6 +634,9 @@ function openApp(appName) {
     if (appName === 'Gallery') loadGallery();
     if (appName === 'Contacts') loadContacts();
     if (appName === 'Calendar') buildCalendar(calendarDate);
+    if (appName === 'Dialer' && dialValue) {
+      document.getElementById('dial-display').textContent = dialValue;
+    }
     if (appName === 'Camera') { appContent.style.padding = '0'; startCamera(); }
     if (appName === 'Browser' || appName === 'Maps') { appContent.style.display = 'flex'; appContent.style.flexDirection = 'column'; }
   }
