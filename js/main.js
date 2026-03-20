@@ -67,6 +67,38 @@ document.getElementById('statusbar').addEventListener('click', () => { openNoti(
 function openNoti() { document.getElementById('notipanel').style.display = 'flex'; }
 function closeNoti() { document.getElementById('notipanel').style.display = 'none'; }
 
+let recentApps = [];
+
+function addRecent(appName) {
+  recentApps = recentApps.filter(a => a !== appName);
+  recentApps.unshift(appName);
+  if (recentApps.length > 5) recentApps.pop();
+}
+
+function openRecents() {
+  const appScreen = document.getElementById('appscreen');
+  const appTitle = document.getElementById('appscreen-title');
+  const appContent = document.getElementById('appscreen-content');
+  appTitle.textContent = 'Recent Apps';
+  if (recentApps.length === 0) {
+    appContent.innerHTML = '<div class="app-placeholder">No recent apps</div>';
+  } else {
+    appContent.innerHTML = '<div style="display:flex;flex-direction:column;gap:15px;padding:10px;">' +
+      recentApps.map(a => '<div onclick="openApp(\'' + a + '\')" style="background:rgba(255,255,255,0.1);border-radius:15px;padding:20px;font-size:18px;cursor:pointer;display:flex;align-items:center;gap:15px;">' + getAppIcon(a) + ' ' + a + '</div>').join('') +
+      '</div>';
+  }
+  appScreen.style.display = 'flex';
+}
+
+function getAppIcon(name) {
+  const icons = {
+    'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
+    'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
+    'Notes': '📝', 'Maps': '🗺️'
+  };
+  return icons[name] || '📱';
+}
+
 let calcValue = '';
 function calcPress(val) {
   const display = document.getElementById('calc-display');
@@ -310,6 +342,10 @@ function openApp(appName) {
   closeNoti();
   if (appName === 'Home') { appScreen.style.display = 'none'; return; }
   if (appName === 'Back') { appScreen.style.display = 'none'; return; }
+  if (appName === 'Recents') { openRecents(); return; }
+
+  addRecent(appName);
+
   const apps = {
     'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
     'Camera': cameraHTML,
@@ -323,6 +359,7 @@ function openApp(appName) {
     'Maps': mapsHTML,
     'Battery': batteryHTML,
   };
+
   if (apps[appName]) {
     appTitle.textContent = appName;
     appContent.innerHTML = apps[appName];
