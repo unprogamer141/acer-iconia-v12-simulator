@@ -243,21 +243,56 @@ function takePhoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext('2d').drawImage(video, 0, 0);
+  const dataURL = canvas.toDataURL('image/jpeg');
+  const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+  photos.push({ src: dataURL, time: new Date().toLocaleString() });
+  localStorage.setItem('photos', JSON.stringify(photos));
   const flash = document.getElementById('camera-flash');
   if (flash) {
     flash.style.opacity = '1';
     setTimeout(() => { flash.style.opacity = '0'; }, 200);
   }
-  alert('📷 Photo taken!');
+  alert('📷 Photo saved to Gallery!');
 }
 
 function switchCamera() {
   alert('🔄 Switching between 8MP rear and 5MP front camera...');
 }
 
+function loadGallery() {
+  const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+  if (photos.length === 0) {
+    grid.innerHTML = '<div class="app-placeholder">🖼️ No Photos Yet<br><br>Take a photo with the Camera app!</div>';
+    return;
+  }
+  grid.innerHTML = photos.reverse().map((p, i) =>
+    '<div class="gallery-item"><img src="' + p.src + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onclick="viewPhoto(' + i + ')"/><div class="gallery-time">' + p.time + '</div></div>'
+  ).join('');
+}
+
+function viewPhoto(index) {
+  const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+  const photo = photos[index];
+  if (!photo) return;
+  const viewer = document.getElementById('photo-viewer');
+  const img = document.getElementById('photo-viewer-img');
+  if (viewer && img) {
+    img.src = photo.src;
+    viewer.style.display = 'flex';
+  }
+}
+
+function closePhotoViewer() {
+  const viewer = document.getElementById('photo-viewer');
+  if (viewer) viewer.style.display = 'none';
+}
+
 const cameraHTML =
   '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;">' +
   '<div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div>' +
+  '<canvas id="camera-canvas" style="display:none;"></canvas>' +
   '<video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video>' +
   '<div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;">' +
   '<div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div>' +
@@ -267,6 +302,13 @@ const cameraHTML =
   '<button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button>' +
   '<button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button>' +
   '</div></div>';
+
+const galleryHTML =
+  '<div id="photo-viewer" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;justify-content:center;align-items:center;flex-direction:column;">' +
+  '<button onclick="closePhotoViewer()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:white;font-size:28px;cursor:pointer;">✕</button>' +
+  '<img id="photo-viewer-img" style="max-width:90%;max-height:80%;border-radius:10px;"/>' +
+  '</div>' +
+  '<div id="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>';
 
 const filesHomeHTML =
   '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div>' +
@@ -384,7 +426,7 @@ function openApp(appName) {
   const apps = {
     'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
     'Camera': cameraHTML,
-    'Gallery': '<div class="app-placeholder">🖼️ No Photos Yet</div>',
+    'Gallery': galleryHTML,
     'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
     'Browser': browserHTML,
     'Calculator': calcHTML,
@@ -400,6 +442,7 @@ function openApp(appName) {
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
+    if (appName === 'Gallery') loadGallery();
     if (appName === 'Camera') {
       appContent.style.padding = '0';
       startCamera();
