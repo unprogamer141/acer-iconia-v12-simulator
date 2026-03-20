@@ -1,3 +1,18 @@
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const boot = document.getElementById('bootscreen');
+    const lock = document.getElementById('lockscreen');
+    if (boot) {
+      boot.style.transition = 'opacity 1s';
+      boot.style.opacity = '0';
+      setTimeout(() => {
+        boot.style.display = 'none';
+        if (lock) lock.style.display = 'flex';
+      }, 1000);
+    }
+  }, 3000);
+});
+
 let battery = 100;
 let charging = false;
 
@@ -49,25 +64,17 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
 
 document.getElementById('statusbar').addEventListener('click', () => { openNoti(); });
 
-function openNoti() {
-  document.getElementById('notipanel').style.display = 'flex';
-}
-function closeNoti() {
-  document.getElementById('notipanel').style.display = 'none';
-}
+function openNoti() { document.getElementById('notipanel').style.display = 'flex'; }
+function closeNoti() { document.getElementById('notipanel').style.display = 'none'; }
 
 let calcValue = '';
 function calcPress(val) {
   const display = document.getElementById('calc-display');
   if (val === '=') {
     try { calcValue = String(eval(calcValue)); } catch(e) { calcValue = 'Error'; }
-  } else if (val === 'C') {
-    calcValue = '';
-  } else if (val === 'DEL') {
-    calcValue = calcValue.slice(0, -1);
-  } else {
-    calcValue += val;
-  }
+  } else if (val === 'C') { calcValue = '';
+  } else if (val === 'DEL') { calcValue = calcValue.slice(0, -1);
+  } else { calcValue += val; }
   display.textContent = calcValue || '0';
 }
 
@@ -90,9 +97,7 @@ function loadNotes() {
   ).join('');
 }
 
-let stopwatchTime = 0;
-let stopwatchRunning = false;
-let stopwatchInterval = null;
+let stopwatchTime = 0, stopwatchRunning = false, stopwatchInterval = null;
 
 function stopwatchStart() {
   if (stopwatchRunning) return;
@@ -106,14 +111,9 @@ function stopwatchStart() {
   }, 1000);
 }
 
-function stopwatchStop() {
-  stopwatchRunning = false;
-  clearInterval(stopwatchInterval);
-}
-
+function stopwatchStop() { stopwatchRunning = false; clearInterval(stopwatchInterval); }
 function stopwatchReset() {
-  stopwatchStop();
-  stopwatchTime = 0;
+  stopwatchStop(); stopwatchTime = 0;
   const el = document.getElementById('stopwatch-display');
   if (el) el.textContent = '00:00';
 }
@@ -174,10 +174,7 @@ const songs = [
   { title: 'Song Four', artist: 'Artist D', duration: '5:01' },
 ];
 
-let currentSong = 0;
-let musicPlaying = false;
-let musicProgress = 0;
-let musicInterval = null;
+let currentSong = 0, musicPlaying = false, musicProgress = 0, musicInterval = null;
 
 function musicPlay() {
   musicPlaying = true;
@@ -196,21 +193,17 @@ function musicPause() {
   document.getElementById('music-play-btn').textContent = '▶';
 }
 
-function musicToggle() {
-  if (musicPlaying) musicPause(); else musicPlay();
-}
+function musicToggle() { if (musicPlaying) musicPause(); else musicPlay(); }
 
 function musicNext() {
   currentSong = (currentSong + 1) % songs.length;
-  musicProgress = 0;
-  updateMusicUI();
+  musicProgress = 0; updateMusicUI();
   if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
 }
 
 function musicPrev() {
   currentSong = (currentSong - 1 + songs.length) % songs.length;
-  musicProgress = 0;
-  updateMusicUI();
+  musicProgress = 0; updateMusicUI();
   if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
 }
 
@@ -248,16 +241,11 @@ function takePhoto() {
   photos.push({ src: dataURL, time: new Date().toLocaleString() });
   localStorage.setItem('photos', JSON.stringify(photos));
   const flash = document.getElementById('camera-flash');
-  if (flash) {
-    flash.style.opacity = '1';
-    setTimeout(() => { flash.style.opacity = '0'; }, 200);
-  }
+  if (flash) { flash.style.opacity = '1'; setTimeout(() => { flash.style.opacity = '0'; }, 200); }
   alert('📷 Photo saved to Gallery!');
 }
 
-function switchCamera() {
-  alert('🔄 Switching between 8MP rear and 5MP front camera...');
-}
+function switchCamera() { alert('🔄 Switching between 8MP rear and 5MP front camera...'); }
 
 function loadGallery() {
   const photos = JSON.parse(localStorage.getItem('photos') || '[]');
@@ -278,81 +266,13 @@ function viewPhoto(index) {
   if (!photo) return;
   const viewer = document.getElementById('photo-viewer');
   const img = document.getElementById('photo-viewer-img');
-  if (viewer && img) {
-    img.src = photo.src;
-    viewer.style.display = 'flex';
-  }
+  if (viewer && img) { img.src = photo.src; viewer.style.display = 'flex'; }
 }
 
 function closePhotoViewer() {
   const viewer = document.getElementById('photo-viewer');
   if (viewer) viewer.style.display = 'none';
 }
-
-const cameraHTML =
-  '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;">' +
-  '<div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div>' +
-  '<canvas id="camera-canvas" style="display:none;"></canvas>' +
-  '<video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video>' +
-  '<div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;">' +
-  '<div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div>' +
-  '</div>' +
-  '<div style="display:flex;justify-content:space-around;align-items:center;padding:15px;background:#111;">' +
-  '<button onclick="switchCamera()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;cursor:pointer;">🔄</button>' +
-  '<button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button>' +
-  '<button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button>' +
-  '</div></div>';
-
-const galleryHTML =
-  '<div id="photo-viewer" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;justify-content:center;align-items:center;flex-direction:column;">' +
-  '<button onclick="closePhotoViewer()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:white;font-size:28px;cursor:pointer;">✕</button>' +
-  '<img id="photo-viewer-img" style="max-width:90%;max-height:80%;border-radius:10px;"/>' +
-  '</div>' +
-  '<div id="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>';
-
-const filesHomeHTML =
-  '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div>' +
-  '<div class="file-storage-fill"><div class="file-storage-used"></div></div>' +
-  '<div class="files-grid">' +
-  '<div class="folder-item" onclick="showFolder(\'Downloads\')">📥<span>Downloads</span></div>' +
-  '<div class="folder-item" onclick="showFolder(\'Pictures\')">🖼️<span>Pictures</span></div>' +
-  '<div class="folder-item" onclick="showFolder(\'Music\')">🎵<span>Music</span></div>' +
-  '<div class="folder-item" onclick="showFolder(\'Videos\')">🎬<span>Videos</span></div>' +
-  '<div class="folder-item" onclick="showFolder(\'Documents\')">📄<span>Documents</span></div>' +
-  '<div class="folder-item" onclick="showFolder(\'DCIM\')">📷<span>DCIM</span></div>' +
-  '</div>';
-
-const browserHTML =
-  '<div class="browser-bar">' +
-  '<input id="browser-url" type="text" placeholder="Enter URL e.g. wikipedia.org" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
-  '<button onclick="browserGo()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px;">Go</button>' +
-  '</div>' +
-  '<iframe id="browser-frame" src="https://www.wikipedia.org" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;height:80%;"></iframe>';
-
-const musicHTML =
-  '<div style="text-align:center;padding:20px;">' +
-  '<div style="font-size:80px;margin-bottom:10px;">🎵</div>' +
-  '<div id="music-title" style="font-size:22px;font-weight:bold;">Song One</div>' +
-  '<div id="music-artist" style="font-size:16px;opacity:0.6;margin:5px 0;">Artist A</div>' +
-  '<div id="music-duration" style="font-size:14px;opacity:0.4;margin-bottom:20px;">3:24</div>' +
-  '<input id="music-progress" type="range" min="0" max="100" value="0" style="width:100%;accent-color:#f0a500;margin-bottom:20px;"/>' +
-  '<div style="display:flex;justify-content:center;gap:20px;">' +
-  '<button onclick="musicPrev()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏮</button>' +
-  '<button id="music-play-btn" onclick="musicToggle()" style="font-size:36px;background:#f0a500;border:none;color:white;cursor:pointer;border-radius:50%;width:60px;height:60px;">▶</button>' +
-  '<button onclick="musicNext()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏭</button>' +
-  '</div>' +
-  '<div style="margin-top:25px;text-align:left;">' +
-  songs.map((s,i) => '<div onclick="currentSong='+i+';musicProgress=0;updateMusicUI();" style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;">🎵 ' + s.title + ' - ' + s.artist + '</div>').join('') +
-  '</div></div>';
-
-const mapsHTML =
-  '<div style="padding:10px;">' +
-  '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
-  '<input id="map-search" type="text" placeholder="Search location..." style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/>' +
-  '<button onclick="mapSearch()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;cursor:pointer;">🔍</button>' +
-  '</div></div>' +
-  '<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1276%2C51.5074%2C-0.1276%2C51.5074&layer=mapnik" style="width:100%;height:75%;border:none;border-radius:10px;"></iframe>' +
-  '<div id="map-result" style="padding:10px;font-size:13px;opacity:0.7;"></div>';
 
 function mapSearch() {
   const query = document.getElementById('map-search').value;
@@ -363,66 +283,33 @@ function mapSearch() {
   if (iframe) iframe.src = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(query);
 }
 
-const clockHTML = '<div class="clock-tabs">' +
-  '<button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button>' +
-  '<button class="clock-tab" onclick="showClockTab(\'timer\')">Timer</button>' +
-  '</div>' +
-  '<div id="tab-stopwatch">' +
-  '<div id="stopwatch-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div>' +
-  '<div style="display:flex;gap:10px;justify-content:center;">' +
-  '<button class="clock-btn green" onclick="stopwatchStart()">Start</button>' +
-  '<button class="clock-btn red" onclick="stopwatchStop()">Stop</button>' +
-  '<button class="clock-btn" onclick="stopwatchReset()">Reset</button>' +
-  '</div></div>' +
-  '<div id="tab-timer" style="display:none;">' +
-  '<div id="timer-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div>' +
-  '<input id="timer-input" type="number" placeholder="Minutes" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:18px;margin-bottom:10px;background:#0f2027;color:white;"/>' +
-  '<button class="clock-btn green" onclick="startTimer()">Start Timer</button>' +
-  '</div>';
+const cameraHTML = '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;"><div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div><canvas id="camera-canvas" style="display:none;"></canvas><video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video><div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;"><div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div></div><div style="display:flex;justify-content:space-around;align-items:center;padding:15px;background:#111;"><button onclick="switchCamera()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;cursor:pointer;">🔄</button><button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button><button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button></div></div>';
 
-const calcHTML = '<div id="calc-display">0</div><div class="calc-grid">' +
-  '<button class="calc-btn red" onclick="calcPress(\'C\')">C</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'DEL\')">DEL</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'%\')">%</button>' +
-  '<button class="calc-btn op" onclick="calcPress(\'/\')">÷</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'7\')">7</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'8\')">8</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'9\')">9</button>' +
-  '<button class="calc-btn op" onclick="calcPress(\'*\')">×</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'4\')">4</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'5\')">5</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'6\')">6</button>' +
-  '<button class="calc-btn op" onclick="calcPress(\'-\')">−</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'1\')">1</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'2\')">2</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'3\')">3</button>' +
-  '<button class="calc-btn op" onclick="calcPress(\'+\')">+</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'0\')">0</button>' +
-  '<button class="calc-btn" onclick="calcPress(\'.\')">.</button>' +
-  '<button class="calc-btn op" style="grid-column:span 2" onclick="calcPress(\'=\')">=</button>' +
-  '</div>';
+const galleryHTML = '<div id="photo-viewer" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;justify-content:center;align-items:center;flex-direction:column;"><button onclick="closePhotoViewer()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:white;font-size:28px;cursor:pointer;">✕</button><img id="photo-viewer-img" style="max-width:90%;max-height:80%;border-radius:10px;"/></div><div id="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>';
 
-const notesHTML = '<textarea id="note-input" placeholder="Type your note here..." style="width:100%;height:120px;background:#0f2027;color:white;border:1px solid #444;border-radius:10px;padding:10px;font-size:15px;margin-bottom:10px;"></textarea>' +
-  '<button onclick="saveNote()" style="width:100%;padding:12px;background:#f0a500;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;">Save Note</button>' +
-  '<div id="notes-list" style="margin-top:15px;"></div>';
+const filesHomeHTML = '<div class="file-storage-bar"><div>Internal Storage</div><div>56GB / 256GB used</div></div><div class="file-storage-fill"><div class="file-storage-used"></div></div><div class="files-grid"><div class="folder-item" onclick="showFolder(\'Downloads\')">📥<span>Downloads</span></div><div class="folder-item" onclick="showFolder(\'Pictures\')">🖼️<span>Pictures</span></div><div class="folder-item" onclick="showFolder(\'Music\')">🎵<span>Music</span></div><div class="folder-item" onclick="showFolder(\'Videos\')">🎬<span>Videos</span></div><div class="folder-item" onclick="showFolder(\'Documents\')">📄<span>Documents</span></div><div class="folder-item" onclick="showFolder(\'DCIM\')">📷<span>DCIM</span></div></div>';
 
-const batteryHTML = '<div style="text-align:center;padding:20px;">' +
-  '<div style="font-size:80px;">🔋</div>' +
-  '<div style="font-size:50px;margin:10px 0;">' + Math.round(battery) + '%</div>' +
-  '<div style="font-size:16px;opacity:0.6;margin-bottom:20px;" id="batt-status">' + (charging ? 'Charging' : 'Discharging') + '</div>' +
-  '<button onclick="charging=true;document.getElementById(\'batt-status\').textContent=\'Charging\'" style="padding:12px 25px;background:#27ae60;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔌 Plug In</button>' +
-  '<button onclick="charging=false;document.getElementById(\'batt-status\').textContent=\'Discharging\'" style="padding:12px 25px;background:#e74c3c;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔋 Unplug</button>' +
-  '</div>';
+const browserHTML = '<div class="browser-bar"><input id="browser-url" type="text" placeholder="Enter URL e.g. wikipedia.org" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/><button onclick="browserGo()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:8px;">Go</button></div><iframe id="browser-frame" src="https://www.wikipedia.org" style="width:100%;flex:1;border:none;border-radius:10px;margin-top:10px;height:80%;"></iframe>';
+
+const musicHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:80px;margin-bottom:10px;">🎵</div><div id="music-title" style="font-size:22px;font-weight:bold;">Song One</div><div id="music-artist" style="font-size:16px;opacity:0.6;margin:5px 0;">Artist A</div><div id="music-duration" style="font-size:14px;opacity:0.4;margin-bottom:20px;">3:24</div><input id="music-progress" type="range" min="0" max="100" value="0" style="width:100%;accent-color:#f0a500;margin-bottom:20px;"/><div style="display:flex;justify-content:center;gap:20px;"><button onclick="musicPrev()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏮</button><button id="music-play-btn" onclick="musicToggle()" style="font-size:36px;background:#f0a500;border:none;color:white;cursor:pointer;border-radius:50%;width:60px;height:60px;">▶</button><button onclick="musicNext()" style="font-size:28px;background:none;border:none;color:white;cursor:pointer;">⏭</button></div><div style="margin-top:25px;text-align:left;">' + songs.map((s,i) => '<div onclick="currentSong='+i+';musicProgress=0;updateMusicUI();" style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;">🎵 ' + s.title + ' - ' + s.artist + '</div>').join('') + '</div></div>';
+
+const mapsHTML = '<div style="padding:10px;"><div style="display:flex;gap:8px;margin-bottom:10px;"><input id="map-search" type="text" placeholder="Search location..." style="flex:1;padding:8px;border-radius:8px;border:none;font-size:14px;background:#0f2027;color:white;"/><button onclick="mapSearch()" style="padding:8px 14px;background:#f0a500;color:white;border:none;border-radius:8px;cursor:pointer;">🔍</button></div></div><iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1276%2C51.5074%2C-0.1276%2C51.5074&layer=mapnik" style="width:100%;height:75%;border:none;border-radius:10px;"></iframe><div id="map-result" style="padding:10px;font-size:13px;opacity:0.7;"></div>';
+
+const clockHTML = '<div class="clock-tabs"><button class="clock-tab active" onclick="showClockTab(\'stopwatch\')">Stopwatch</button><button class="clock-tab" onclick="showClockTab(\'timer\')">Timer</button></div><div id="tab-stopwatch"><div id="stopwatch-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div><div style="display:flex;gap:10px;justify-content:center;"><button class="clock-btn green" onclick="stopwatchStart()">Start</button><button class="clock-btn red" onclick="stopwatchStop()">Stop</button><button class="clock-btn" onclick="stopwatchReset()">Reset</button></div></div><div id="tab-timer" style="display:none;"><div id="timer-display" style="font-size:60px;text-align:center;padding:30px;">00:00</div><input id="timer-input" type="number" placeholder="Minutes" style="width:100%;padding:12px;border-radius:10px;border:none;font-size:18px;margin-bottom:10px;background:#0f2027;color:white;"/><button class="clock-btn green" onclick="startTimer()">Start Timer</button></div>';
+
+const calcHTML = '<div id="calc-display">0</div><div class="calc-grid"><button class="calc-btn red" onclick="calcPress(\'C\')">C</button><button class="calc-btn" onclick="calcPress(\'DEL\')">DEL</button><button class="calc-btn" onclick="calcPress(\'%\')">%</button><button class="calc-btn op" onclick="calcPress(\'/\')">÷</button><button class="calc-btn" onclick="calcPress(\'7\')">7</button><button class="calc-btn" onclick="calcPress(\'8\')">8</button><button class="calc-btn" onclick="calcPress(\'9\')">9</button><button class="calc-btn op" onclick="calcPress(\'*\')">×</button><button class="calc-btn" onclick="calcPress(\'4\')">4</button><button class="calc-btn" onclick="calcPress(\'5\')">5</button><button class="calc-btn" onclick="calcPress(\'6\')">6</button><button class="calc-btn op" onclick="calcPress(\'-\')">−</button><button class="calc-btn" onclick="calcPress(\'1\')">1</button><button class="calc-btn" onclick="calcPress(\'2\')">2</button><button class="calc-btn" onclick="calcPress(\'3\')">3</button><button class="calc-btn op" onclick="calcPress(\'+\')">+</button><button class="calc-btn" onclick="calcPress(\'0\')">0</button><button class="calc-btn" onclick="calcPress(\'.\')">.</button><button class="calc-btn op" style="grid-column:span 2" onclick="calcPress(\'=\')">=</button></div>';
+
+const notesHTML = '<textarea id="note-input" placeholder="Type your note here..." style="width:100%;height:120px;background:#0f2027;color:white;border:1px solid #444;border-radius:10px;padding:10px;font-size:15px;margin-bottom:10px;"></textarea><button onclick="saveNote()" style="width:100%;padding:12px;background:#f0a500;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;">Save Note</button><div id="notes-list" style="margin-top:15px;"></div>';
+
+const batteryHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:80px;">🔋</div><div style="font-size:50px;margin:10px 0;">' + Math.round(battery) + '%</div><div style="font-size:16px;opacity:0.6;margin-bottom:20px;" id="batt-status">' + (charging ? 'Charging' : 'Discharging') + '</div><button onclick="charging=true;document.getElementById(\'batt-status\').textContent=\'Charging\'" style="padding:12px 25px;background:#27ae60;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔌 Plug In</button><button onclick="charging=false;document.getElementById(\'batt-status\').textContent=\'Discharging\'" style="padding:12px 25px;background:#e74c3c;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin:5px;">🔋 Unplug</button></div>';
 
 function openApp(appName) {
   const appScreen = document.getElementById('appscreen');
   const appTitle = document.getElementById('appscreen-title');
   const appContent = document.getElementById('appscreen-content');
-
   closeNoti();
   if (appName === 'Home') { appScreen.style.display = 'none'; return; }
   if (appName === 'Back') { appScreen.style.display = 'none'; return; }
-
   const apps = {
     'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
     'Camera': cameraHTML,
@@ -436,20 +323,13 @@ function openApp(appName) {
     'Maps': mapsHTML,
     'Battery': batteryHTML,
   };
-
   if (apps[appName]) {
     appTitle.textContent = appName;
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
     if (appName === 'Gallery') loadGallery();
-    if (appName === 'Camera') {
-      appContent.style.padding = '0';
-      startCamera();
-    }
-    if (appName === 'Browser' || appName === 'Maps') {
-      appContent.style.display = 'flex';
-      appContent.style.flexDirection = 'column';
-    }
+    if (appName === 'Camera') { appContent.style.padding = '0'; startCamera(); }
+    if (appName === 'Browser' || appName === 'Maps') { appContent.style.display = 'flex'; appContent.style.flexDirection = 'column'; }
   }
 }
