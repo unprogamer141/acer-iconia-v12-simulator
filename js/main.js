@@ -13,24 +13,16 @@ window.addEventListener('load', () => {
   }, 3000);
 });
 
-// Long press power button simulation
 let powerHold;
 document.getElementById('tablet').addEventListener('touchstart', (e) => {
   if (e.touches.length === 2) {
     powerHold = setTimeout(() => { openPowerMenu(); }, 1000);
   }
 });
-document.getElementById('tablet').addEventListener('touchend', () => {
-  clearTimeout(powerHold);
-});
+document.getElementById('tablet').addEventListener('touchend', () => { clearTimeout(powerHold); });
 
-function openPowerMenu() {
-  document.getElementById('powermenu').style.display = 'flex';
-}
-
-function closePowerMenu() {
-  document.getElementById('powermenu').style.display = 'none';
-}
+function openPowerMenu() { document.getElementById('powermenu').style.display = 'flex'; }
+function closePowerMenu() { document.getElementById('powermenu').style.display = 'none'; }
 
 function powerOff() {
   closePowerMenu();
@@ -123,9 +115,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 let startY = 0;
-document.getElementById('lockscreen').addEventListener('touchstart', (e) => {
-  startY = e.touches[0].clientY;
-});
+document.getElementById('lockscreen').addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
 document.getElementById('lockscreen').addEventListener('touchend', (e) => {
   const endY = e.changedTouches[0].clientY;
   if (startY - endY > 50) {
@@ -135,12 +125,10 @@ document.getElementById('lockscreen').addEventListener('touchend', (e) => {
 });
 
 document.getElementById('statusbar').addEventListener('click', () => { openNoti(); });
-
 function openNoti() { document.getElementById('notipanel').style.display = 'flex'; }
 function closeNoti() { document.getElementById('notipanel').style.display = 'none'; }
 
 let recentApps = [];
-
 function addRecent(appName) {
   recentApps = recentApps.filter(a => a !== appName);
   recentApps.unshift(appName);
@@ -166,7 +154,7 @@ function getAppIcon(name) {
   const icons = {
     'Camera': '📷', 'Gallery': '🖼️', 'Settings': '⚙️', 'Files': '📁',
     'Browser': '🌐', 'Calculator': '🧮', 'Clock': '🕐', 'Music': '🎵',
-    'Notes': '📝', 'Maps': '🗺️'
+    'Notes': '📝', 'Maps': '🗺️', 'About': '📱'
   };
   return icons[name] || '📱';
 }
@@ -202,7 +190,6 @@ function loadNotes() {
 }
 
 let stopwatchTime = 0, stopwatchRunning = false, stopwatchInterval = null;
-
 function stopwatchStart() {
   if (stopwatchRunning) return;
   stopwatchRunning = true;
@@ -214,7 +201,6 @@ function stopwatchStart() {
     if (el) el.textContent = mins + ':' + secs;
   }, 1000);
 }
-
 function stopwatchStop() { stopwatchRunning = false; clearInterval(stopwatchInterval); }
 function stopwatchReset() {
   stopwatchStop(); stopwatchTime = 0;
@@ -279,7 +265,6 @@ const songs = [
 ];
 
 let currentSong = 0, musicPlaying = false, musicProgress = 0, musicInterval = null;
-
 function musicPlay() {
   musicPlaying = true;
   document.getElementById('music-play-btn').textContent = '⏸';
@@ -290,27 +275,22 @@ function musicPlay() {
     if (bar) bar.value = musicProgress;
   }, 1000);
 }
-
 function musicPause() {
   musicPlaying = false;
   clearInterval(musicInterval);
   document.getElementById('music-play-btn').textContent = '▶';
 }
-
 function musicToggle() { if (musicPlaying) musicPause(); else musicPlay(); }
-
 function musicNext() {
   currentSong = (currentSong + 1) % songs.length;
   musicProgress = 0; updateMusicUI();
   if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
 }
-
 function musicPrev() {
   currentSong = (currentSong - 1 + songs.length) % songs.length;
   musicProgress = 0; updateMusicUI();
   if (musicPlaying) { clearInterval(musicInterval); musicPlay(); }
 }
-
 function updateMusicUI() {
   const s = songs[currentSong];
   const title = document.getElementById('music-title');
@@ -387,6 +367,38 @@ function mapSearch() {
   if (iframe) iframe.src = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(query);
 }
 
+const aboutHTML =
+  '<div style="text-align:center;padding:15px 0;margin-bottom:10px;">' +
+  '<div style="font-size:50px;font-weight:bold;color:#83b735;letter-spacing:4px;">Acer</div>' +
+  '<div style="font-size:18px;margin-top:5px;">Iconia V12</div>' +
+  '</div>' +
+  '<div class="setting-item">📱 Model <span>Acer Iconia V12</span></div>' +
+  '<div class="setting-item">🖥️ Display <span>11.97" IPS 2000x1200 90Hz</span></div>' +
+  '<div class="setting-item">⚡ Processor <span>MediaTek Helio G99</span></div>' +
+  '<div class="setting-item">🧠 RAM <span>8GB DDR4</span></div>' +
+  '<div class="setting-item">💾 Storage <span>256GB UFS</span></div>' +
+  '<div class="setting-item">📷 Rear Camera <span>8MP</span></div>' +
+  '<div class="setting-item">🤳 Front Camera <span>5MP</span></div>' +
+  '<div class="setting-item">🔋 Battery <span>8000mAh</span></div>' +
+  '<div class="setting-item">⚡ Charging <span>USB-C Power Delivery 2.0</span></div>' +
+  '<div class="setting-item">📶 WiFi <span>WiFi 6 (802.11ax)</span></div>' +
+  '<div class="setting-item">🔵 Bluetooth <span>5.2</span></div>' +
+  '<div class="setting-item">🎨 Color <span>Mist Green</span></div>' +
+  '<div class="setting-item">🤖 Android <span>Android 15</span></div>' +
+  '<div class="setting-item">🔊 Audio <span>Dual Stereo Speakers</span></div>' +
+  '<div class="setting-item">💻 Build <span>Aluminum Chassis</span></div>';
+
+const settingsHTML =
+  '<div class="setting-item" onclick="openApp(\'About\')">📶 WiFi <span>Connected ›</span></div>' +
+  '<div class="setting-item">🔵 Bluetooth <span>On</span></div>' +
+  '<div class="setting-item">🔆 Brightness <span>80%</span></div>' +
+  '<div class="setting-item">🔊 Volume <span>60%</span></div>' +
+  '<div class="setting-item">🌐 Mobile Data <span>On</span></div>' +
+  '<div class="setting-item">📍 Location <span>On</span></div>' +
+  '<div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div>' +
+  '<div class="setting-item">💾 Storage <span>256GB</span></div>' +
+  '<div class="setting-item" onclick="openApp(\'About\')">📱 About Device <span>Acer Iconia V12 ›</span></div>';
+
 const cameraHTML = '<div style="position:relative;width:100%;height:100%;background:#000;display:flex;flex-direction:column;"><div id="camera-flash" style="position:absolute;top:0;left:0;width:100%;height:100%;background:white;opacity:0;z-index:5;pointer-events:none;transition:opacity 0.1s;"></div><canvas id="camera-canvas" style="display:none;"></canvas><video id="camera-video" autoplay playsinline style="width:100%;flex:1;object-fit:cover;"></video><div id="camera-placeholder" style="display:none;flex:1;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:18px;gap:10px;"><div style="font-size:60px;">📷</div><div>8MP Rear Camera</div><div style="opacity:0.5;font-size:14px;">Camera access not available</div></div><div style="display:flex;justify-content:space-around;align-items:center;padding:15px;background:#111;"><button onclick="switchCamera()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;cursor:pointer;">🔄</button><button onclick="takePhoto()" style="background:white;border:none;color:black;width:65px;height:65px;border-radius:50%;font-size:24px;cursor:pointer;">📷</button><button style="background:rgba(255,255,255,0.2);border:none;color:white;padding:10px 15px;border-radius:10px;font-size:16px;">8MP</button></div></div>';
 
 const galleryHTML = '<div id="photo-viewer" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;justify-content:center;align-items:center;flex-direction:column;"><button onclick="closePhotoViewer()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:white;font-size:28px;cursor:pointer;">✕</button><img id="photo-viewer-img" style="max-width:90%;max-height:80%;border-radius:10px;"/></div><div id="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>';
@@ -419,7 +431,8 @@ function openApp(appName) {
   addRecent(appName);
 
   const apps = {
-    'Settings': '<div class="setting-item">📶 WiFi <span>Connected</span></div><div class="setting-item">🔵 Bluetooth <span>On</span></div><div class="setting-item">🔆 Brightness <span>80%</span></div><div class="setting-item">🔊 Volume <span>60%</span></div><div class="setting-item">🌐 Mobile Data <span>On</span></div><div class="setting-item">📍 Location <span>On</span></div><div class="setting-item">🔋 Battery <span>' + Math.round(battery) + '%</span></div><div class="setting-item">💾 Storage <span>256GB</span></div><div class="setting-item">📱 About Device <span>Acer Iconia V12</span></div>',
+    'Settings': settingsHTML,
+    'About': aboutHTML,
     'Camera': cameraHTML,
     'Gallery': galleryHTML,
     'Files': '<div id="files-content">' + filesHomeHTML + '</div>',
@@ -433,7 +446,7 @@ function openApp(appName) {
   };
 
   if (apps[appName]) {
-    appTitle.textContent = appName;
+    appTitle.textContent = appName === 'About' ? 'About Device' : appName;
     appContent.innerHTML = apps[appName];
     appScreen.style.display = 'flex';
     if (appName === 'Notes') loadNotes();
